@@ -101,12 +101,7 @@ function sync(){
   badge.textContent=off?'SAFE SHUTDOWN // CONVERTER OFFLINE':(lk||lc?'ALERT // DEFENSE-IN-DEPTH ACTIVE':'NOMINAL // 5-STAGE CONVERSION ACTIVE');
   const col=off?'#ff1744':(lk||lc?'#ffab00':'#00e676');badge.style.color=col;badge.style.borderColor=col;
 }
-function flt(k){
-  if(k==='trit'){sTrit.value=55;lg('Tritium leak -> 30s room isolation active.');}
-  if(k==='cool'){sCool.value=30;lg('Cooling loss -> Converter tripped & plasma quenched.');}
-  if(k==='mag'){sMag.value=45;lg('Magnet quench -> Energy dumped safely.');}
-  if(k==='plas'){sMag.value=50;lg('Plasma disruption -> Magnetic shutdown.');}
-  sync();
+
 
 function flt(k){
   if(k==='trit'){sTrit.value=55;lg('Tritium leak -> 30s room isolation active.');}
@@ -119,7 +114,7 @@ function rst(){
   sCap.value=1000;sEff.value=44;sMag.value=95;sCool.value=92;sTrit.value=100;
   exp=false;rx=0.45;ry=0.58;zm=0.98;bExp.className='';log.innerHTML='';lg('5-Stage ARC Converter online (440 MWe).');sync();
 }
-[sCap,sEff,sMag,sCool,sTrit].forEach(e=>e.oninput=sync);
+[sCap,sEff,sMag,sCool,sTrit].forEach(e=>e.oninput=sync);}
 bExp.onclick=()=>{exp=!exp;bExp.className=exp?'active':'';lg(exp?'Exploded View ON: Showing all 5 conversion stages.':'Standard reactor assembly.');};
 bRot.onclick=()=>{spin=!spin;bRot.className=spin?'active':'';bRot.textContent='Auto-Orbit: '+(spin?'ON':'OFF');};
 vp.onmousedown=e=>{dg=true;lx=e.clientX;ly=e.clientY;};
