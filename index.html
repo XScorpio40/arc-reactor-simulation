@@ -116,7 +116,6 @@ function rst(){
 bExp.onclick=()=>{exp=!exp;bExp.className=exp?'active':'';lg(exp?'Exploded View ON: Showing all 5 conversion stages.':'Standard reactor assembly.');};
 bRot.onclick=()=>{spin=!spin;bRot.className=spin?'active':'';bRot.textContent='Auto-Orbit: '+(spin?'ON':'OFF');};
 vp.onmousedown=e=>{dg=true;lx=e.clientX;ly=e.clientY;};
-window.onmouseup=()=>dg=false;
   oFl.textContent=off?'290 °C (Standby)':Math.round(620+(cap/15000)*140+(100-cool)*1.2)+' °C Molten Salt';
   oMW.textContent=mw.toLocaleString()+' MWe';
   oVolt.textContent=(off?'0.0 kV':(22+(mw/9750)*14).toFixed(1)+' kV AC')+' • '+((mw*8760*.9)/1e6).toFixed(2)+' TWh/yr';
