@@ -2,25 +2,25 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>3D Holographic ARC Reactor // Command Center</title>
+<title>3D ARC Fusion Reactor // Exploded Energy Conversion Assembly</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,sans-serif}
   body{background:#02040a;color:#e0f7fa;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-  header{padding:10px 22px;background:rgba(4,10,22,.95);border-bottom:1px solid rgba(0,229,255,.35);display:flex;justify-content:space-between;align-items:center;z-index:10}
+  header{padding:10px 22px;background:rgba(4,10,22,.96);border-bottom:1px solid rgba(0,229,255,.35);display:flex;justify-content:space-between;align-items:center;z-index:10}
   header h1{font-size:14px;color:#00e5ff;letter-spacing:2px;text-shadow:0 0 12px rgba(0,229,255,.8)}
   #badge{padding:4px 14px;border-radius:20px;font-size:11px;font-weight:bold;letter-spacing:1px;background:rgba(0,230,118,.15);color:#00e676;border:1px solid #00e676}
-  .layout{display:grid;grid-template-columns:270px 1fr 280px;flex:1;height:calc(100vh - 44px)}
-  .panel{background:rgba(4,10,22,.9);padding:14px;border-right:1px solid rgba(0,229,255,.25);display:flex;flex-direction:column;gap:10px;overflow-y:auto;z-index:5}
+  .layout{display:grid;grid-template-columns:265px 1fr 285px;flex:1;height:calc(100vh - 44px)}
+  .panel{background:rgba(4,10,22,.92);padding:13px;border-right:1px solid rgba(0,229,255,.25);display:flex;flex-direction:column;gap:9px;overflow-y:auto;z-index:5}
   .panel.right{border-right:none;border-left:1px solid rgba(0,229,255,.25)}
   h3{font-size:11px;color:#80deea;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid rgba(0,229,255,.2);padding-bottom:4px}
-  .slider-box{display:flex;flex-direction:column;gap:4px;font-size:12px}
+  .slider-box{display:flex;flex-direction:column;gap:3px;font-size:12px}
   .slider-top{display:flex;justify-content:space-between}
   .slider-top b{color:#00e5ff}
   input[type=range]{width:100%;accent-color:#00e5ff;cursor:pointer}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
   button{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.4);color:#e0f7fa;padding:8px;border-radius:5px;font-size:11px;cursor:pointer;text-transform:uppercase;transition:.2s}
   button:hover{background:rgba(0,229,255,.25);border-color:#00e5ff}
-  button.active{background:#00e5ff;color:#020813;font-weight:bold;box-shadow:0 0 14px rgba(0,229,255,.7)}
+  button.active{background:#00e5ff;color:#020813;font-weight:bold;box-shadow:0 0 14px rgba(0,229,255,.75)}
   button.red{border-color:rgba(255,23,68,.55);color:#ff8a80}
   button.red:hover{background:rgba(255,23,68,.3);color:#fff}
   button.reset{margin-top:auto;background:rgba(0,230,118,.15);border-color:#00e676;color:#00e676;font-weight:bold}
@@ -28,53 +28,50 @@
   #vp{position:relative;width:100%;height:100%;cursor:grab;overflow:hidden;background:#010308}
   #vp:active{cursor:grabbing}
   canvas{display:block;width:100%;height:100%}
+  .pipeline{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:rgba(3,9,20,.88);padding:6px 14px;border-radius:20px;border:1px solid rgba(0,229,255,.3);font-size:11px;pointer-events:none;white-space:nowrap}
+  .step{padding:2px 8px;border-radius:10px;font-weight:bold}
   .hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#80deea;background:rgba(2,6,14,.85);padding:5px 14px;border-radius:12px;border:1px solid rgba(0,229,255,.3);pointer-events:none;white-space:nowrap}
-  .card{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.25);padding:9px 11px;border-radius:6px}
+  .card{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.25);padding:8px 10px;border-radius:6px}
   .card small{color:#80deea;font-size:10px;display:block;text-transform:uppercase}
-  .card strong{font-size:18px;color:#00e5ff;text-shadow:0 0 10px rgba(0,229,255,.5)}
-  .item{display:flex;justify-content:space-between;font-size:11px;padding:6px 8px;background:rgba(255,255,255,.04);border-left:3px solid #00e676;border-radius:4px}
+  .card strong{font-size:16px;color:#00e5ff;text-shadow:0 0 10px rgba(0,229,255,.5)}
+  .item{display:flex;justify-content:space-between;font-size:11px;padding:5px 8px;background:rgba(255,255,255,.04);border-left:3px solid #00e676;border-radius:4px}
   .item.warn{border-left-color:#ffab00;color:#ffe57f;background:rgba(255,171,0,.1)}
-  #log{background:#010206;border:1px solid rgba(0,229,255,.25);padding:8px;height:100px;overflow-y:auto;font-size:11px;color:#80deea;border-radius:4px;line-height:1.4}
+  #log{background:#010206;border:1px solid rgba(0,229,255,.25);padding:7px;height:80px;overflow-y:auto;font-size:11px;color:#80deea;border-radius:4px;line-height:1.35}
 </style>
 </head>
 <body>
 <header>
-  <h1>ARC FUSION REACTOR // 3D HOLOGRAPHIC COMMAND</h1>
-  <div id="badge">NOMINAL // PLASMA LOCKED</div>
+  <h1>ARC FUSION REACTOR // PLASMA-TO-ELECTRICAL CONVERTER</h1>
+  <div id="badge">NOMINAL // 5-STAGE CONVERSION ACTIVE</div>
 </header>
 <div class="layout">
   <div class="panel">
-    <h3>Reactor Controls</h3>
-    <div class="slider-box"><div class="slider-top"><span>Capacity Output</span><b id="vCap">400 MW</b></div><input type="range" id="sCap" min="400" max="7000" step="100" value="400"></div>
-    <div class="slider-box"><div class="slider-top"><span>Magnetic Field</span><b id="vMag">95%</b></div><input type="range" id="sMag" min="40" max="100" value="95"></div>
-    <div class="slider-box"><div class="slider-top"><span>Cooling Flow</span><b id="vCool">92%</b></div><input type="range" id="sCool" min="20" max="100" value="92"></div>
-    <div class="slider-box"><div class="slider-top"><span>Tritium Barrier</span><b id="vTrit">100%</b></div><input type="range" id="sTrit" min="40" max="100" value="100"></div>
-    <h3>3D Hologram View</h3>
-    <div class="grid2">
-      <button id="bExp">Exploded View</button>
-      <button id="bRot" class="active">Auto-Orbit: ON</button>
-    </div>
+    <h3>Reactor & Converter Controls</h3>
+    <div class="slider-box"><div class="slider-top"><span>Plasma Thermal Input</span><b id="vCap">1,000 MWth</b></div><input type="range" id="sCap" min="500" max="15000" step="100" value="1000"></div>
+    <div class="slider-box"><div class="slider-top"><span>Conversion Efficiency</span><b id="vEff">44%</b></div><input type="range" id="sEff" min="25" max="65" value="44"></div>
+    <div class="slider-box"><div class="slider-top"><span>Magnetic Confinement</span><b id="vMag">95%</b></div><input type="range" id="sMag" min="40" max="100" value="95"></div>
+    <div class="slider-box"><div class="slider-top"><span>FLiBe & Cooling Flow</span><b id="vCool">92%</b></div><input type="range" id="sCool" min="20" max="100" value="92"></div>
+    <div class="slider-box"><div class="slider-top"><span>Tritium Containment</span><b id="vTrit">100%</b></div><input type="range" id="sTrit" min="40" max="100" value="100"></div>
+    <h3>3D Assembly Inspection</h3>
+    <div class="grid2"><button id="bExp">Exploded View</button><button id="bRot" class="active">Auto-Orbit: ON</button></div>
     <h3>Inject Failure</h3>
-    <div class="grid2">
-      <button class="red" onclick="flt('trit')">Tritium Leak</button>
-      <button class="red" onclick="flt('cool')">Cooling Loss</button>
-      <button class="red" onclick="flt('mag')">Magnet Quench</button>
-      <button class="red" onclick="flt('plas')">Disruption</button>
-    </div>
+    <div class="grid2"><button class="red" onclick="flt('trit')">Tritium Leak</button><button class="red" onclick="flt('cool')">Cooling Loss</button><button class="red" onclick="flt('mag')">Magnet Quench</button><button class="red" onclick="flt('plas')">Disruption</button></div>
     <button class="reset" onclick="rst()">Reset All Systems</button>
   </div>
   <div id="vp">
+    <div class="pipeline"><span class="step" style="color:#00e5ff">1. D-T Plasma</span>➔<span class="step" style="color:#ff9100">2. FLiBe Blanket</span>➔<span class="step" style="color:#ffd740">3. MHD & Turbine</span>➔<span class="step" style="color:#00e676" id="pGrid">4. 440 MWe Grid</span></div>
     <canvas id="c"></canvas>
-    <div class="hint">Drag to Rotate 3D Core • Scroll to Zoom • Exploded View Separates Internal Layers</div>
+    <div class="hint">Click "Exploded View" to Separate All 5 Conversion Stages • Drag to Rotate • Scroll to Zoom</div>
   </div>
   <div class="panel right">
-    <h3>Live Telemetry</h3>
-    <div class="card"><small>Net Electrical Output</small><strong id="oMW">400 MW</strong><small id="oYr">3.15 TWh/year (90% CF)</small></div>
-    <div class="card"><small>Plasma Core Temperature</small><strong id="oTp">120 Million °C</strong><small id="oMd">Commercial Baseline ARC</small></div>
+    <h3>Energy Conversion Telemetry</h3>
+    <div class="card"><small>Stage 1: Fusion Plasma Power</small><strong id="oTh">1,000 MWth</strong><small id="oTp">Core Temp: 120 Million °C</small></div>
+    <div class="card"><small>Stage 2: FLiBe Blanket Heat</small><strong id="oFl">680 °C Molten Salt</strong><small id="oMd">80% Neutron Kinetic Capture</small></div>
+    <div class="card"><small>Stage 3–4: Net Grid Output</small><strong id="oMW">440 MWe</strong><small id="oVolt">24.8 kV AC • 3.47 TWh/yr</small></div>
     <h3>Defense-in-Depth</h3>
     <div class="item" id="d1"><span>Double Containment</span><b>SEALED</b></div>
     <div class="item" id="d2"><span>30s Room Isolation</span><b>STANDBY</b></div>
-    <div class="item" id="d3"><span>Redundant Cooling</span><b>ACTIVE</b></div>
+    <div class="item" id="d3"><span>MHD / Turbine Sync</span><b>LOCKED</b></div>
     <div class="item" id="d4"><span>Auto Plasma Shutdown</span><b>ARMED</b></div>
     <h3>Safety Event Log</h3>
     <div id="log"></div>
@@ -82,159 +79,121 @@
 </div>
 <script>
 const c=document.getElementById('c'),x=c.getContext('2d'),vp=document.getElementById('vp');
-let cap=400,mag=95,cool=92,trit=100,exp=false,eAmt=0,spin=true,off=false,rx=0.5,ry=0.35,zm=1.1,t=0,dg=false,lx=0,ly=0;
-const stars=Array.from({length:120},()=>({x:(Math.random()-.5)*950,y:(Math.random()-.5)*750,z:(Math.random()-.5)*650,s:Math.random()*1.6+.4}));
-const pts=Array.from({length:360},(_,i)=>({a:(i/360)*Math.PI*2,r:(Math.random()-.5)*34,z:(Math.random()-.5)*24,s:.018+Math.random()*.038,sz:1.1+Math.random()*2.3}));
-
+let cap=1000,eff=44,mag=95,cool=92,trit=100,exp=false,eAmt=0,spin=true,off=false,rx=0.45,ry=0.58,zm=0.98,t=0,dg=false,lx=0,ly=0;
+const stars=Array.from({length:120},()=>({x:(Math.random()-.5)*980,y:(Math.random()-.5)*780,z:(Math.random()-.5)*700,s:Math.random()*1.5+.4}));
+const pts=Array.from({length:300},(_,i)=>({a:(i/300)*Math.PI*2,r:(Math.random()-.5)*28,z:(Math.random()-.5)*20,s:.018+Math.random()*.036,sz:1.1+Math.random()*2.1}));
+const pulses=Array.from({length:72},(_,i)=>({a:(i/72)*Math.PI*2,p:Math.random(),s:.012+Math.random()*.018}));
 function lg(m){log.innerHTML=`<div>> ${m}</div>`+log.innerHTML;}
 function sd(id,tx,w){const e=document.getElementById(id);e.querySelector('b').textContent=tx;e.className=w?'item warn':'item';}
-
 function sync(){
-  cap=+sCap.value;mag=+sMag.value;cool=+sCool.value;trit=+sTrit.value;
-  vCap.textContent=cap.toLocaleString()+' MW';vMag.textContent=mag+'%';vCool.textContent=cool+'%';vTrit.textContent=trit+'%';
+  cap=+sCap.value;eff=+sEff.value;mag=+sMag.value;cool=+sCool.value;trit=+sTrit.value;
+  vCap.textContent=cap.toLocaleString()+' MWth';vEff.textContent=eff+'%';vMag.textContent=mag+'%';vCool.textContent=cool+'%';vTrit.textContent=trit+'%';
   const lk=trit<75,lc=cool<55,lm=mag<60;off=lm||cool<35;
-  const mw=off?0:cap;
-  oMW.textContent=mw.toLocaleString()+' MW';
-  oYr.textContent=((mw*8760*.9)/1e6).toFixed(2)+' TWh/year (90% CF)';
-  oTp.textContent=off?'QUENCHED (Safe)':Math.round(115+(cap/7000)*35+(100-cool)*.8)+' Million °C';
-  oMd.textContent=cap<=600?'Commercial Baseline ARC':(cap>=6500?'Mega-Scale Plant (55.2 TWh)':'Modular Grid Units');
+  const th=off?0:cap,mw=Math.round(th*(eff/100));
+  oTh.textContent=th.toLocaleString()+' MWth';
+  oTp.textContent=off?'Plasma Quenched (Safe)':'Core Temp: '+Math.round(115+(cap/15000)*35+(100-cool)*.8)+' Million °C';
+  oFl.textContent=off?'290 °C (Standby)':Math.round(620+(cap/15000)*140+(100-cool)*1.2)+' °C Molten Salt';
+  oMW.textContent=mw.toLocaleString()+' MWe';
+  oVolt.textContent=(off?'0.0 kV':(22+(mw/9750)*14).toFixed(1)+' kV AC')+' • '+((mw*8760*.9)/1e6).toFixed(2)+' TWh/yr';
+  pGrid.textContent='4. '+mw.toLocaleString()+' MWe Grid';
   sd('d1',lk?'BREACH':'SEALED',lk);sd('d2',lk?'ISOLATED (<30s)':'STANDBY',lk);
-  sd('d3',lc?'BACKUP ON':'ACTIVE',lc);sd('d4',off?'TRIGGERED':'ARMED',off);
-  badge.textContent=off?'SAFE SHUTDOWN // PLASMA STOPPED':(lk||lc?'ALERT // DEFENSE-IN-DEPTH ACTIVE':'NOMINAL // PLASMA LOCKED');
-  const col=off?'#ff1744':(lk||lc?'#ffab00':'#00e676');
-  badge.style.color=col;badge.style.borderColor=col;
+  sd('d3',off?'OFFLINE':(lc?'DERATED':'LOCKED'),off||lc);sd('d4',off?'TRIGGERED':'ARMED',off);
+  badge.textContent=off?'SAFE SHUTDOWN // CONVERTER OFFLINE':(lk||lc?'ALERT // DEFENSE-IN-DEPTH ACTIVE':'NOMINAL // 5-STAGE CONVERSION ACTIVE');
+  const col=off?'#ff1744':(lk||lc?'#ffab00':'#00e676');badge.style.color=col;badge.style.borderColor=col;
 }
-
 function flt(k){
   if(k==='trit'){sTrit.value=55;lg('Tritium leak -> 30s room isolation active.');}
-  if(k==='cool'){sCool.value=30;lg('Cooling loss -> Auto plasma shutdown.');}
+  if(k==='cool'){sCool.value=30;lg('Cooling loss -> Converter tripped & plasma quenched.');}
   if(k==='mag'){sMag.value=45;lg('Magnet quench -> Energy dumped safely.');}
   if(k==='plas'){sMag.value=50;lg('Plasma disruption -> Magnetic shutdown.');}
   sync();
 }
-
 function rst(){
-  sCap.value=400;sMag.value=95;sCool.value=92;sTrit.value=100;
-  exp=false;rx=0.5;ry=0.35;zm=1.1;bExp.className='';log.innerHTML='';
-  lg('3D Holographic Engine online: 400 MW ARC nominal.');sync();
+  sCap.value=1000;sEff.value=44;sMag.value=95;sCool.value=92;sTrit.value=100;
+  exp=false;rx=0.45;ry=0.58;zm=0.98;bExp.className='';log.innerHTML='';lg('5-Stage ARC Converter online (440 MWe).');sync();
 }
-
-[sCap,sMag,sCool,sTrit].forEach(e=>e.oninput=sync);
-bExp.onclick=()=>{exp=!exp;bExp.className=exp?'active':'';lg(exp?'Exploded 3D layer view ON.':'Standard assembly view.');};
+[sCap,sEff,sMag,sCool,sTrit].forEach(e=>e.oninput=sync);
+bExp.onclick=()=>{exp=!exp;bExp.className=exp?'active':'';lg(exp?'Exploded View ON: Showing all 5 conversion stages.':'Standard reactor assembly.');};
+bRot.onclick=()=>{spin=!spin;bRot.className=spin?'active':'';bRot.textContent='Auto-Orbit: '+(spin?'ON':'OFF');};
+vp.onmousedown=e=>{dg=true;lx=e.clientX;ly=e.clientY;};
+window.onmouseup=()=>dg=false;
+  oFl.textContent=off?'290 °C (Standby)':Math.round(620+(cap/15000)*140+(100-cool)*1.2)+' °C Molten Salt';
+  oMW.textContent=mw.toLocaleString()+' MWe';
+  oVolt.textContent=(off?'0.0 kV':(22+(mw/9750)*14).toFixed(1)+' kV AC')+' • '+((mw*8760*.9)/1e6).toFixed(2)+' TWh/yr';
+  pGrid.textContent='4. '+mw.toLocaleString()+' MWe Grid';
+  sd('d1',lk?'BREACH':'SEALED',lk);sd('d2',lk?'ISOLATED (<30s)':'STANDBY',lk);
+  sd('d3',off?'OFFLINE':(lc?'DERATED':'LOCKED'),off||lc);sd('d4',off?'TRIGGERED':'ARMED',off);
+  badge.textContent=off?'SAFE SHUTDOWN // CONVERTER OFFLINE':(lk||lc?'ALERT // DEFENSE-IN-DEPTH ACTIVE':'NOMINAL // 5-STAGE CONVERSION ACTIVE');
+  const col=off?'#ff1744':(lk||lc?'#ffab00':'#00e676');badge.style.color=col;badge.style.borderColor=col;
+}
+function flt(k){
+  if(k==='trit'){sTrit.value=55;lg('Tritium leak -> 30s room isolation active.');}
+  if(k==='cool'){sCool.value=30;lg('Cooling loss -> Converter tripped & plasma quenched.');}
+  if(k==='mag'){sMag.value=45;lg('Magnet quench -> Energy dumped safely.');}
+  if(k==='plas'){sMag.value=50;lg('Plasma disruption -> Magnetic shutdown.');}
+  sync();
+}
+function rst(){
+  sCap.value=1000;sEff.value=44;sMag.value=95;sCool.value=92;sTrit.value=100;
+  exp=false;rx=0.45;ry=0.58;zm=0.98;bExp.className='';log.innerHTML='';lg('5-Stage ARC Converter online (440 MWe).');sync();
+}
+[sCap,sEff,sMag,sCool,sTrit].forEach(e=>e.oninput=sync);
+bExp.onclick=()=>{exp=!exp;bExp.className=exp?'active':'';lg(exp?'Exploded View ON: Showing all 5 conversion stages.':'Standard reactor assembly.');};
 bRot.onclick=()=>{spin=!spin;bRot.className=spin?'active':'';bRot.textContent='Auto-Orbit: '+(spin?'ON':'OFF');};
 vp.onmousedown=e=>{dg=true;lx=e.clientX;ly=e.clientY;};
 window.onmouseup=()=>dg=false;
 window.onmousemove=e=>{if(!dg)return;ry+=(e.clientX-lx)*.008;rx+=(e.clientY-ly)*.008;lx=e.clientX;ly=e.clientY;};
-vp.onwheel=e=>{e.preventDefault();zm=Math.min(1.9,Math.max(.65,zm-e.deltaY*.0008));};
-
+vp.onwheel=e=>{e.preventDefault();zm=Math.min(1.8,Math.max(.6,zm-e.deltaY*.0008));};
 function P(px,py,pz,cx,cy){
   const cy1=Math.cos(ry),sy1=Math.sin(ry),cx1=Math.cos(rx),sx1=Math.sin(rx);
-  const x1=px*cy1-pz*sy1,z1=pz*cy1+px*sy1,y2=py*cx1-z1*sx1,z2=z1*cx1+py*sx1;
-  const f=580*zm,s=f/(f+z2+250);
+  const x1=px*cy1-pz*sy1,z1=pz*cy1+px*sy1,y2=py*cx1-z1*sx1,z2=z1*cx1+py*sx1,f=580*zm,s=f/(f+z2+280);
   return{x:cx+x1*s,y:cy+y2*s,s};
 }
-
 function R3(r,z,n,col,w,cx,cy){
   x.strokeStyle=col;x.lineWidth=w;x.beginPath();
   for(let i=0;i<=n;i++){const a=(i/n)*Math.PI*2,p=P(Math.cos(a)*r,Math.sin(a)*r,z,cx,cy);i===0?x.moveTo(p.x,p.y):x.lineTo(p.x,p.y);}
   x.stroke();
 }
-
-function loop(){
-  const w=vp.clientWidth||700,h=vp.clientHeight||550;
-  if(c.width!==w||c.height!==h){c.width=w;c.height=h;}
-  t+=.022;if(spin&&!dg)ry+=.005;eAmt+=((exp?1:0)-eAmt)*.08;
-
-  const bg=x.createRadialGradient(w/2,h/2,20,w/2,h/2,Math.max(w,h)*.75);
-  bg.addColorStop(0,'#0a2142');bg.addColorStop(.55,'#030b1a');bg.addColorStop(1,'#010308');
-  x.fillStyle=bg;x.fillRect(0,0,w,h);
-
-  const cx=w/2,cy=h/2,wn=trit<75||cool<55;
-  const mc=off?'#ff1744':(wn?'#ffab00':'#00e5ff');
-  const rgb=off?'255,23,68':(wn?'255,171,0':'0,229,255');
-
-  x.fillStyle='rgba(0,229,255,.28)';
-  stars.forEach(d=>{const p=P(d.x,d.y,d.z,cx,cy);x.beginPath();x.arc(p.x,p.y,d.s*p.s,0,Math.PI*2);x.fill();});
-
-  const ps=1+(cap/7000)*.45,bl=x.createRadialGradient(cx,cy,6,cx,cy,250*zm*ps);
-lg(exp?'Exploded 3D layer view ON.':'Standard assembly view.');};
-bRot.onclick=()=>{spin=!spin;bRot.className=spin?'active':'';bRot.textContent='Auto-Orbit: '+(spin?'ON':'OFF');};
-vp.onmousedown=e=>{dg=true;lx=e.clientX;ly=e.clientY;};
-window.onmouseup=()=>dg=false;
-window.onmousemove=e=>{if(!dg)return;ry+=(e.clientX-lx)*.008;rx+=(e.clientY-ly)*.008;lx=e.clientX;ly=e.clientY;};
-vp.onwheel=e=>{e.preventDefault();zm=Math.min(1.9,Math.max(.65,zm-e.deltaY*.0008));};
-
-function P(px,py,pz,cx,cy){
-  const cy1=Math.cos(ry),sy1=Math.sin(ry),cx1=Math.cos(rx),sx1=Math.sin(rx);
-  const x1=px*cy1-pz*sy1,z1=pz*cy1+px*sy1,y2=py*cx1-z1*sx1,z2=z1*cx1+py*sx1;
-  const f=580*zm,s=f/(f+z2+250);
-  return{x:cx+x1*s,y:cy+y2*s,s};
+function callout(px,py,pz,tx,ty,title,sub,col,cx,cy){
+  const p=P(px,py,pz,cx,cy);x.strokeStyle=col;x.lineWidth=1.5;x.beginPath();x.moveTo(p.x,p.y);x.lineTo(p.x+tx,p.y+ty);x.lineTo(p.x+tx+(tx>0?18:-18),p.y+ty);x.stroke();
+  x.fillStyle=col;x.beginPath();x.arc(p.x,p.y,3.5,0,Math.PI*2);x.fill();x.textAlign=tx>0?'left':'right';
+  const lx=p.x+tx+(tx>0?24:-24);x.font='bold 12px Segoe UI,sans-serif';x.fillText(title,lx,p.y+ty-2);
+  x.fillStyle='rgba(224,247,250,.8)';x.font='10px Segoe UI,sans-serif';x.fillText(sub,lx,p.y+ty+11);x.textAlign='left';
 }
-
-function R3(r,z,n,col,w,cx,cy){
-  x.strokeStyle=col;x.lineWidth=w;x.beginPath();
-  for(let i=0;i<=n;i++){const a=(i/n)*Math.PI*2,p=P(Math.cos(a)*r,Math.sin(a)*r,z,cx,cy);i===0?x.moveTo(p.x,p.y):x.lineTo(p.x,p.y);}
-  x.stroke();
-}
-
 function loop(){
-  const w=vp.clientWidth||700,h=vp.clientHeight||550;
-  if(c.width!==w||c.height!==h){c.width=w;c.height=h;}
-  t+=.022;if(spin&&!dg)ry+=.005;eAmt+=((exp?1:0)-eAmt)*.08;
-
+  const w=vp.clientWidth||700,h=vp.clientHeight||550;if(c.width!==w||c.height!==h){c.width=w;c.height=h;}
+  t+=.022;if(spin&&!dg)ry+=.0045;eAmt+=((exp?1:0)-eAmt)*.08;
   const bg=x.createRadialGradient(w/2,h/2,20,w/2,h/2,Math.max(w,h)*.75);
-  bg.addColorStop(0,'#0a2142');bg.addColorStop(.55,'#030b1a');bg.addColorStop(1,'#010308');
-  x.fillStyle=bg;x.fillRect(0,0,w,h);
-
-  const cx=w/2,cy=h/2,wn=trit<75||cool<55;
-  const mc=off?'#ff1744':(wn?'#ffab00':'#00e5ff');
-  const rgb=off?'255,23,68':(wn?'255,171,0':'0,229,255');
-
-  x.fillStyle='rgba(0,229,255,.28)';
-  stars.forEach(d=>{const p=P(d.x,d.y,d.z,cx,cy);x.beginPath();x.arc(p.x,p.y,d.s*p.s,0,Math.PI*2);x.fill();});
-
-  const ps=1+(cap/7000)*.45,bl=x.createRadialGradient(cx,cy,6,cx,cy,250*zm*ps);
-  bl.addColorStop(0,`rgba(255,255,255,${off?.15:.85})`);bl.addColorStop(.2,`rgba(${rgb},${off?.25:.6})`);
-  bl.addColorStop(.58,`rgba(${rgb},.14)`);bl.addColorStop(1,'rgba(0,0,0,0)');
+  bg.addColorStop(0,'#0a2142');bg.addColorStop(.55,'#030b1a');bg.addColorStop(1,'#010308');x.fillStyle=bg;x.fillRect(0,0,w,h);
+  const cx=w/2,cy=h/2,wn=trit<75||cool<55,mc=off?'#ff1744':(wn?'#ffab00':'#00e5ff'),rgb=off?'255,23,68':(wn?'255,171,0':'0,229,255');
+  x.fillStyle='rgba(0,229,255,.28)';stars.forEach(d=>{const p=P(d.x,d.y,d.z,cx,cy);x.beginPath();x.arc(p.x,p.y,d.s*p.s,0,Math.PI*2);x.fill();});
+  const ps=1+(cap/15000)*.45,bl=x.createRadialGradient(cx,cy,6,cx,cy,250*zm*ps);
+  bl.addColorStop(0,`rgba(255,255,255,${off?.15:.8})`);bl.addColorStop(.22,`rgba(${rgb},${off?.25:.55})`);bl.addColorStop(.6,`rgba(${rgb},.12)`);bl.addColorStop(1,'rgba(0,0,0,0)');
   x.fillStyle=bl;x.beginPath();x.arc(cx,cy,250*zm*ps,0,Math.PI*2);x.fill();
-
-  const bz=-115*eAmt;
-  R3(205,bz,90,`rgba(${rgb},.25)`,1.5,cx,cy);
-  R3(186,bz*.75,90,`rgba(${rgb},.65)`,3.5,cx,cy);
-
-  for(let i=0;i<12;i++){
-    const a=(i/12)*Math.PI*2+t*.08,p1=P(Math.cos(a)*88,Math.sin(a)*88,bz*.3,cx,cy),p2=P(Math.cos(a)*186,Math.sin(a)*186,bz*.75,cx,cy);
-    x.strokeStyle='rgba(128,222,234,.4)';x.lineWidth=3.5;x.beginPath();x.moveTo(p1.x,p1.y);x.lineTo(p2.x,p2.y);x.stroke();
-  }
-
+  const z5=-180*eAmt,z4=-90*eAmt,z3=-25*eAmt,z2=35*eAmt,z1=135*eAmt;
+  if(eAmt>.05){const a1=P(0,0,z5-20,cx,cy),a2=P(0,0,z1+20,cx,cy);x.save();x.setLineDash();x.strokeStyle=`rgba(0,229,255,${.35*eAmt})`;x.lineWidth=1.5;x.beginPath();x.moveTo(a1.x,a1.y);x.lineTo(a2.x,a2.y);x.stroke();x.restore();}
+  R3(215,z5,84,off?'rgba(255,23,68,.4)':'rgba(0,230,118,.75)',3.5,cx,cy);R3(195,z5,84,'rgba(0,229,255,.35)',1.5,cx,cy);
+  for(let i=0;i<8;i++){const a=(i/8)*Math.PI*2-t*.1,p1=P(Math.cos(a)*175,Math.sin(a)*175,z5,cx,cy),p2=P(Math.cos(a)*215,Math.sin(a)*215,z5,cx,cy);x.strokeStyle='#00e676';x.lineWidth=4;x.beginPath();x.moveTo(p1.x,p1.y);x.lineTo(p2.x,p2.y);x.stroke();}
+  R3(182,z4,84,'rgba(255,215,64,.85)',3,cx,cy);
+  for(let i=0;i<16;i++){const a=(i/16)*Math.PI*2+t*.12,p1=P(Math.cos(a)*142,Math.sin(a)*142,z4,cx,cy),p2=P(Math.cos(a)*182,Math.sin(a)*182,z4,cx,cy);x.strokeStyle='#ffd740';x.lineWidth=3.2;x.beginPath();x.moveTo(p1.x,p1.y);x.lineTo(p2.x,p2.y);x.stroke();}
+  R3(156,z3,72,'rgba(255,145,0,.75)',5,cx,cy);R3(144,z3,72,'rgba(255,171,0,.4)',2,cx,cy);
+  if(!off){pulses.forEach(pl=>{pl.p=(pl.p+pl.s*(eff/42))%1;const rad=125+pl.p*90,curZ=z2+(z5-z2)*pl.p,p=P(Math.cos(pl.a+t*.15)*rad,Math.sin(pl.a+t*.15)*rad,curZ,cx,cy);x.fillStyle=pl.p<.4?'#ff9100':(pl.p<.75?'#ffd740':'#00e676');x.beginPath();x.arc(p.x,p.y,2.5*p.s,0,Math.PI*2);x.fill();});}
   x.shadowColor=mc;x.shadowBlur=off?4:16;
-  for(let k=0;k<18;k++){
-    const ba=(k/18)*Math.PI*2+t*.18;x.strokeStyle=k%2===0?mc:'#ff9100';x.lineWidth=2.8;x.beginPath();
-    for(let s=0;s<=30;s++){const th=(s/30)*Math.PI*2,px=(134+30*Math.cos(th))*Math.cos(ba),py=(134+30*Math.cos(th))*Math.sin(ba),pz=30*Math.sin(th),p=P(px,py,pz,cx,cy);s===0?x.moveTo(p.x,p.y):x.lineTo(p.x,p.y);}
-    x.stroke();
-  }
+  for(let k=0;k<18;k++){const ba=(k/18)*Math.PI*2+t*.18;x.strokeStyle=k%2===0?mc:'#ff9100';x.lineWidth=2.5;x.beginPath();for(let s=0;s<=26;s++){const th=(s/26)*Math.PI*2,px=(124+26*Math.cos(th))*Math.cos(ba),py=(124+26*Math.cos(th))*Math.sin(ba),pz=26*Math.sin(th)+z2,p=P(px,py,pz,cx,cy);s===0?x.moveTo(p.x,p.y):x.lineTo(p.x,p.y);}x.stroke();}
   x.shadowBlur=0;
-
-  const spd=off?.08:.75+(cap/7000)*2;
-  pts.forEach(pt=>{pt.a+=pt.s*spd;const r=134+pt.r,p=P(Math.cos(pt.a)*r,Math.sin(pt.a)*r,pt.z,cx,cy);x.fillStyle=Math.random()>.25?mc:'#fff';x.beginPath();x.arc(p.x,p.y,pt.sz*p.s,0,Math.PI*2);x.fill();});
-
-  const fz=110*eAmt;
-  R3(86,fz*.5,72,`rgba(${rgb},.85)`,3,cx,cy);
-  x.shadowColor=mc;x.shadowBlur=off?6:30;
-  for(let l=0;l<2;l++){
-    const rd=l===0?68:48,zp=fz+l*16;x.strokeStyle=l===0?mc:'#fff';x.lineWidth=l===0?5.5:2.8;x.beginPath();
-    for(let j=0;j<3;j++){const an=(j*Math.PI*2)/3-Math.PI/2,pt=P(Math.cos(an)*rd,Math.sin(an)*rd,zp,cx,cy);j===0?x.moveTo(pt.x,pt.y):x.lineTo(pt.x,pt.y);}
-    x.closePath();x.stroke();
-  }
-  const pls=off?16:21+Math.sin(t*5)*3.5;
-  R3(pls,fz+24,48,'#fff',3.2,cx,cy);x.shadowBlur=0;
-
-  if(eAmt>.4){
-    x.fillStyle=`rgba(224,247,250,${eAmt})`;x.font='bold 12px Segoe UI,sans-serif';
-    const l1=P(190,-45,bz*.75,cx,cy),l2=P(150,70,0,cx,cy),l3=P(78,-20,fz+12,cx,cy);
-    x.fillText('← Neutron Shielding & Double Containment',l1.x+8,l1.y);
-    x.fillText('← 18 Superconducting Toroidal Coils',l2.x+8,l2.y);
-    x.fillText('← Triangular Magnetic Plasma Core',l3.x+8,l3.y);
+  const spd=off?.08:.75+(cap/15000)*2;
+  pts.forEach(pt=>{pt.a+=pt.s*spd;const r=124+pt.r,p=P(Math.cos(pt.a)*r,Math.sin(pt.a)*r,pt.z+z2,cx,cy);x.fillStyle=Math.random()>.25?mc:'#fff';x.beginPath();x.arc(p.x,p.y,pt.sz*p.s,0,Math.PI*2);x.fill();});
+  R3(78,z1-5,64,`rgba(${rgb},.85)`,2.8,cx,cy);x.shadowColor=mc;x.shadowBlur=off?6:28;
+  for(let l=0;l<2;l++){const rd=l===0?62:44,zp=z1+l*14;x.strokeStyle=l===0?mc:'#fff';x.lineWidth=l===0?5:2.5;x.beginPath();for(let j=0;j<3;j++){const an=(j*Math.PI*2)/3-Math.PI/2,pt=P(Math.cos(an)*rd,Math.sin(an)*rd,zp,cx,cy);j===0?x.moveTo(pt.x,pt.y):x.lineTo(pt.x,pt.y);}x.closePath();x.stroke();}
+  const pls=off?15:20+Math.sin(t*5)*3.5;R3(pls,z1+22,44,'#fff',3,cx,cy);x.shadowBlur=0;
+  if(eAmt>.45){
+    x.globalAlpha=eAmt;
+    callout(52,-30,z1,85,-45,'1. D-T Plasma Ignition Core','120M °C Fusion Reaction','#00e5ff',cx,cy);
+    callout(-124,-40,z2,-85,-55,'2. Superconducting Coils','Magnetic Plasma Confinement','#4dd0e1',cx,cy);
+    callout(152,20,z3,90,10,'3. FLiBe Molten-Salt Blanket','Captures 80% Neutron Heat','#ff9100',cx,cy);
+    callout(-178,45,z4,-85,45,'4. MHD Coils & Brayton Turbine','Converts Heat & Flux to Current','#ffd740',cx,cy);
+    callout(205,-65,z5,80,-25,'5. Step-Up Grid Transformer','24.8 kV AC City Grid Output','#00e676',cx,cy);
+    x.globalAlpha=1;
   }
   requestAnimationFrame(loop);
 }
