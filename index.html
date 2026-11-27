@@ -3,73 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARC-X Fusion Reactor // 3D Energy Conversion Simulation</title>
+<title>ARC-CORE // Cylindrical Plasma-to-Electric Converter</title>
 <style>
   :root {
-    --cyan: #00f0ff;
-    --orange: #ff7b00;
-    --gold: #ffd000;
-    --green: #00ff88;
-    --red: #ff1e42;
-    --panel: rgba(7, 14, 28, 0.94);
-    --border: rgba(0, 240, 255, 0.28);
+    --cyan: #38bdf8;
+    --blue-glow: #00a8ff;
+    --copper: #e87a3d;
+    --emerald: #10b981;
+    --red: #f43f5e;
+    --panel: rgba(8, 12, 20, 0.92);
+    --border: rgba(56, 189, 248, 0.25);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; user-select: none; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; user-select: none; }
 
   body {
-    background: #02040a;
-    color: #e6f9ff;
+    background: #030508;
+    color: #e2e8f0;
     height: 100vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
 
-  /* Top Header */
   header {
-    height: 50px;
-    padding: 0 18px;
-    background: rgba(4, 9, 20, 0.98);
+    height: 48px;
+    padding: 0 20px;
+    background: rgba(5, 8, 14, 0.98);
     border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
     z-index: 10;
-    flex-shrink: 0;
   }
 
   .brand { display: flex; align-items: center; gap: 10px; }
   .dot {
     width: 9px; height: 9px; border-radius: 50%;
-    background: var(--cyan);
-    box-shadow: 0 0 12px var(--cyan);
+    background: var(--blue-glow);
+    box-shadow: 0 0 12px var(--blue-glow);
     animation: pulse 1.6s infinite;
   }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 
-  header h1 {
-    font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    color: #fff;
-    white-space: nowrap;
-  }
+  header h1 { font-size: 13px; font-weight: 800; letter-spacing: 2px; color: #f8fafc; }
   header h1 span { color: var(--cyan); }
-
-  .pipeline {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    background: rgba(0, 240, 255, 0.05);
-    padding: 5px 12px;
-    border-radius: 20px;
-    border: 1px solid rgba(0, 240, 255, 0.2);
-    font-size: 11px;
-    font-weight: 700;
-    white-space: nowrap;
-  }
 
   #badge {
     padding: 4px 12px;
@@ -77,34 +55,29 @@
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 1px;
-    background: rgba(0, 255, 136, 0.14);
-    color: var(--green);
-    border: 1px solid var(--green);
-    white-space: nowrap;
+    background: rgba(16, 185, 129, 0.14);
+    color: var(--emerald);
+    border: 1px solid var(--emerald);
   }
 
-  /* Main 3-Column Grid (Prevents Panels From Ever Overlapping the 3D Reactor) */
   .layout {
     display: grid;
-    grid-template-columns: 265px 1fr 275px;
+    grid-template-columns: 260px 1fr 270px;
     flex: 1;
-    height: calc(100vh - 50px);
+    height: calc(100vh - 48px);
     overflow: hidden;
   }
 
   .panel {
     background: var(--panel);
-    padding: 13px;
+    padding: 14px;
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    gap: 9px;
+    gap: 10px;
     overflow-y: auto;
-    z-index: 5;
   }
   .panel.right { border-right: none; border-left: 1px solid var(--border); }
-  .panel::-webkit-scrollbar { width: 4px; }
-  .panel::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.3); border-radius: 4px; }
 
   h3 {
     font-size: 10.5px;
@@ -112,29 +85,27 @@
     color: var(--cyan);
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    border-bottom: 1px solid rgba(56, 189, 248, 0.2);
     padding-bottom: 4px;
-    margin-top: 2px;
   }
 
-  /* Sliders */
   .slider-box {
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(15, 23, 42, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    padding: 7px 9px;
+    padding: 8px 10px;
     border-radius: 6px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
   }
-  .slider-top { display: flex; justify-content: space-between; font-size: 11.5px; color: #b8e4f0; }
-  .slider-top b { color: var(--cyan); font-variant-numeric: tabular-nums; }
+  .slider-top { display: flex; justify-content: space-between; font-size: 11.5px; color: #94a3b8; }
+  .slider-top b { color: #f8fafc; font-variant-numeric: tabular-nums; }
 
   input[type=range] {
     -webkit-appearance: none;
     width: 100%;
     height: 4px;
-    background: rgba(0, 240, 255, 0.22);
+    background: rgba(56, 189, 248, 0.25);
     border-radius: 2px;
     outline: none;
     cursor: pointer;
@@ -146,14 +117,13 @@
     box-shadow: 0 0 8px var(--cyan);
   }
 
-  /* Buttons */
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
 
   button {
-    background: rgba(0, 240, 255, 0.09);
-    border: 1px solid rgba(0, 240, 255, 0.38);
-    color: #e6f9ff;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #f1f5f9;
     padding: 8px 6px;
     border-radius: 6px;
     font-size: 10.5px;
@@ -163,27 +133,26 @@
     letter-spacing: 0.6px;
     transition: 0.2s;
   }
-  button:hover { background: rgba(0, 240, 255, 0.25); border-color: var(--cyan); }
-  button.active { background: var(--cyan); color: #020813; box-shadow: 0 0 14px rgba(0, 240, 255, 0.7); }
-  button.red { background: rgba(255, 30, 66, 0.1); border-color: rgba(255, 30, 66, 0.5); color: #ff8fa3; }
-  button.red:hover { background: rgba(255, 30, 66, 0.32); border-color: var(--red); color: #fff; }
+  button:hover { background: rgba(56, 189, 248, 0.25); border-color: var(--cyan); }
+  button.active { background: var(--cyan); color: #020617; box-shadow: 0 0 12px rgba(56, 189, 248, 0.6); }
+  button.red { background: rgba(244, 63, 94, 0.1); border-color: rgba(244, 63, 94, 0.45); color: #fda4af; }
+  button.red:hover { background: rgba(244, 63, 94, 0.3); border-color: var(--red); color: #fff; }
   button.reset {
     margin-top: auto;
-    background: rgba(0, 255, 136, 0.14);
-    border-color: var(--green);
-    color: var(--green);
+    background: rgba(16, 185, 129, 0.14);
+    border-color: var(--emerald);
+    color: #6ee7b7;
     padding: 9px;
   }
-  button.reset:hover { background: var(--green); color: #020813; }
+  button.reset:hover { background: var(--emerald); color: #020617; }
 
-  /* Center 3D Canvas Viewport */
   #vp {
     position: relative;
     width: 100%;
     height: 100%;
     cursor: grab;
     overflow: hidden;
-    background: #010308;
+    background: radial-gradient(circle at 50% 45%, #0a111e 0%, #030508 75%);
   }
   #vp:active { cursor: grabbing; }
   canvas#c { display: block; width: 100%; height: 100%; }
@@ -194,8 +163,8 @@
     left: 50%;
     transform: translateX(-50%);
     font-size: 11px;
-    color: #9be7f5;
-    background: rgba(3, 8, 18, 0.88);
+    color: #94a3b8;
+    background: rgba(5, 8, 15, 0.88);
     padding: 5px 14px;
     border-radius: 14px;
     border: 1px solid var(--border);
@@ -203,51 +172,41 @@
     white-space: nowrap;
   }
 
-  /* Right Telemetry Cards */
   .card {
-    background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(0, 12, 28, 0.7));
-    border: 1px solid rgba(0, 240, 255, 0.24);
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(56, 189, 248, 0.22);
     border-left: 3px solid var(--cyan);
-    padding: 8px 10px;
+    padding: 9px 11px;
     border-radius: 6px;
   }
-  .card.orange { border-left-color: var(--orange); }
-  .card.green { border-left-color: var(--green); }
-  .card small { color: #8cc8d8; font-size: 10px; display: block; text-transform: uppercase; font-weight: 600; }
-  .card strong { font-size: 16px; color: #fff; display: block; margin: 2px 0; text-shadow: 0 0 10px rgba(0, 240, 255, 0.45); }
-
-  #scope {
-    width: 100%;
-    height: 46px;
-    background: #010308;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    display: block;
-  }
+  .card.copper { border-left-color: var(--copper); }
+  .card.green { border-left-color: var(--emerald); }
+  .card small { color: #94a3b8; font-size: 10px; display: block; text-transform: uppercase; font-weight: 600; }
+  .card strong { font-size: 17px; color: #fff; display: block; margin: 2px 0; }
 
   .item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 11px;
-    padding: 5px 8px;
-    background: rgba(255, 255, 255, 0.04);
-    border-left: 3px solid var(--green);
+    padding: 6px 8px;
+    background: rgba(15, 23, 42, 0.5);
+    border-left: 3px solid var(--emerald);
     border-radius: 4px;
   }
-  .item b { color: var(--green); font-size: 10px; }
-  .item.warn { border-left-color: var(--gold); background: rgba(255, 208, 0, 0.12); color: #ffe57f; }
-  .item.warn b { color: var(--gold); }
+  .item b { color: var(--emerald); font-size: 10px; }
+  .item.warn { border-left-color: #f59e0b; background: rgba(245, 158, 11, 0.12); }
+  .item.warn b { color: #fcd34d; }
 
   #log {
-    background: #010206;
+    background: #020408;
     border: 1px solid var(--border);
     padding: 7px;
-    height: 82px;
+    height: 90px;
     overflow-y: auto;
     font-family: monospace;
     font-size: 10.5px;
-    color: #80deea;
+    color: #7dd3fc;
     border-radius: 5px;
     line-height: 1.4;
   }
@@ -258,84 +217,69 @@
 <header>
   <div class="brand">
     <div class="dot" id="bDot"></div>
-    <h1>ARC-X <span>//</span> FUSION ENERGY CONVERTER</h1>
+    <h1>ARC-MK4 <span>//</span> PLASMA INDUCTION CONVERTER</h1>
   </div>
-  <div class="pipeline">
-    <span style="color:#00f0ff">1. D-T PLASMA</span> ➔
-    <span style="color:#ff7b00">2. FLIBE BLANKET</span> ➔
-    <span style="color:#ffd000">3. MHD & TURBINE</span> ➔
-    <span style="color:#00ff88" id="pGrid">4. 440 MWe GRID</span>
-  </div>
-  <div id="badge">NOMINAL // 5-STAGE ACTIVE</div>
+  <div id="badge">NOMINAL // PLASMA LOCK ACTIVE</div>
 </header>
 
 <div class="layout">
-  <!-- Left Controls -->
   <div class="panel">
-    <h3>Reactor & Converter Controls</h3>
-    <div class="slider-box"><div class="slider-top"><span>Plasma Thermal Input</span><b id="vCap">1,000 MWth</b></div><input type="range" id="sCap" min="500" max="15000" step="100" value="1000"></div>
-    <div class="slider-box"><div class="slider-top"><span>Conversion Efficiency</span><b id="vEff">44%</b></div><input type="range" id="sEff" min="25" max="65" value="44"></div>
-    <div class="slider-box"><div class="slider-top"><span>Magnetic Confinement</span><b id="vMag">95%</b></div><input type="range" id="sMag" min="40" max="100" value="95"></div>
-    <div class="slider-box"><div class="slider-top"><span>FLiBe & Cooling Flow</span><b id="vCool">92%</b></div><input type="range" id="sCool" min="20" max="100" value="92"></div>
-    <div class="slider-box"><div class="slider-top"><span>Tritium Containment</span><b id="vTrit">100%</b></div><input type="range" id="sTrit" min="40" max="100" value="100"></div>
+    <h3>Core Controls</h3>
+    <div class="slider-box"><div class="slider-top"><span>Plasma Ionization</span><b id="vCap">3.2 GJ/s</b></div><input type="range" id="sCap" min="500" max="10000" step="100" value="3200"></div>
+    <div class="slider-box"><div class="slider-top"><span>Copper Induction Eff.</span><b id="vEff">68%</b></div><input type="range" id="sEff" min="30" max="85" value="68"></div>
+    <div class="slider-box"><div class="slider-top"><span>Magnetic Ring Flux</span><b id="vMag">96%</b></div><input type="range" id="sMag" min="40" max="100" value="96"></div>
+    <div class="slider-box"><div class="slider-top"><span>Cryo-Cooling Flow</span><b id="vCool">94%</b></div><input type="range" id="sCool" min="20" max="100" value="94"></div>
 
-    <h3>3D Assembly Inspection</h3>
+    <h3>Assembly & Camera</h3>
     <div class="grid2">
       <button id="bExp">Exploded View</button>
-      <button id="bRot" class="active">Auto-Orbit: ON</button>
+      <button id="bRot" class="active">Auto-Spin: ON</button>
     </div>
     <div class="grid3">
-      <button onclick="setCam(0.45, 0.58, 0.98)">Iso</button>
-      <button onclick="setCam(1.35, 0.2, 0.92)">Top</button>
-      <button onclick="setCam(0.2, 0.65, 1.35)">Core</button>
+      <button onclick="setCam(-0.42, 0.52, 1.02)">Bottom 3D</button>
+      <button onclick="setCam(0.45, 0.58, 1.0)">Top 3D</button>
+      <button onclick="setCam(0.05, 0.6, 1.25)">Side</button>
     </div>
 
-    <h3>Inject Failure</h3>
+    <h3>Stress Test</h3>
     <div class="grid2">
-      <button class="red" onclick="flt('trit')">Tritium Leak</button>
-      <button class="red" onclick="flt('cool')">Cooling Loss</button>
-      <button class="red" onclick="flt('mag')">Magnet Quench</button>
-      <button class="red" onclick="flt('plas')">Disruption</button>
+      <button class="red" onclick="flt('mag')">Flux Drop</button>
+      <button class="red" onclick="flt('cool')">Overheat</button>
     </div>
 
-    <button class="reset" onclick="rst()">Reset All Systems</button>
+    <button class="reset" onclick="rst()">Reset Converter</button>
   </div>
 
-  <!-- Center 3D Reactor Canvas -->
   <div id="vp">
     <canvas id="c"></canvas>
-    <div class="hint">Click <b>Exploded View</b> to Separate All 5 Stages • Drag to Rotate • Scroll to Zoom</div>
+    <div class="hint">Drag to Orbit 360° • Scroll to Zoom • Click <b>Exploded View</b> to Separate Core</div>
   </div>
 
-  <!-- Right Telemetry -->
   <div class="panel right">
-    <h3>Energy Conversion Telemetry</h3>
+    <h3>Converter Telemetry</h3>
     <div class="card">
-      <small>Stage 1: Fusion Plasma Power</small>
-      <strong id="oTh">1,000 MWth</strong>
-      <small id="oTp">Core Temp: 120 Million °C</small>
+      <small>Stage 1 • Ionized Plasma Core</small>
+      <strong id="oTh">3,200 MWth</strong>
+      <small id="oTp">Arc Temp: 14,800 K • Blue-White</small>
     </div>
-    <div class="card orange">
-      <small>Stage 2: FLiBe Blanket Heat</small>
-      <strong id="oFl">680 °C Molten Salt</strong>
-      <small>80% Neutron Kinetic Capture</small>
+    <div class="card copper">
+      <small>Stage 2 • Central Copper Solenoid</small>
+      <strong id="oCu">48,200 Amps</strong>
+      <small>Direct Electromagnetic Induction</small>
     </div>
     <div class="card green">
-      <small>Stage 3–5: Net Grid Output</small>
-           <strong id="oMW">440 MWe</strong>
-      <small id="oVolt">24.8 kV AC • 3.47 TWh/yr</small>
+      <small>Stage 3 • Net Electrical Output</small>
+      <strong id="oMW">2,176 MWe</strong>
+      <small id="oVolt">18.4 kV DC Bus</small>
     </div>
 
-    <h3>Plasma Flux & Grid Waveform</h3>
-    <canvas id="scope" width="248" height="46"></canvas>
+    <h3>Hardware Diagnostics</h3>
+    <div class="item" id="d1"><span>Titanium Bolted Casing</span><b>LOCKED</b></div>
+    <div class="item" id="d2"><span>Toroidal Plasma Ring</span><b>STABLE</b></div>
+    <div class="item" id="d3"><span>Copper Stator Windings</span><b>OPTIMAL</b></div>
+    <div class="item" id="d4"><span>Thermal Quench Relay</span><b>ARMED</b></div>
 
-    <h3>Defense-in-Depth</h3>
-    <div class="item" id="d1"><span>Double Containment</span><b>SEALED</b></div>
-    <div class="item" id="d2"><span>30s Room Isolation</span><b>STANDBY</b></div>
-    <div class="item" id="d3"><span>MHD / Turbine Sync</span><b>LOCKED</b></div>
-    <div class="item" id="d4"><span>Auto Plasma Shutdown</span><b>ARMED</b></div>
-
-    <h3>Safety Event Log</h3>
+    <h3>Telemetry Log</h3>
     <div id="log"></div>
   </div>
 </div>
@@ -343,101 +287,74 @@
 <script>
 const el = id => document.getElementById(id);
 const c = el('c'), x = c.getContext('2d'), vp = el('vp');
-const scope = el('scope'), sx = scope.getContext('2d');
+const sCap = el('sCap'), sEff = el('sEff'), sMag = el('sMag'), sCool = el('sCool');
+const vCap = el('vCap'), vEff = el('vEff'), vMag = el('vMag'), vCool = el('vCool');
+const oTh = el('oTh'), oTp = el('oTp'), oCu = el('oCu'), oMW = el('oMW'), oVolt = el('oVolt');
+const badge = el('badge'), bDot = el('bDot'), log = el('log'), bExp = el('bExp'), bRot = el('bRot');
 
-const sCap = el('sCap'), sEff = el('sEff'), sMag = el('sMag'), sCool = el('sCool'), sTrit = el('sTrit');
-const vCap = el('vCap'), vEff = el('vEff'), vMag = el('vMag'), vCool = el('vCool'), vTrit = el('vTrit');
-const oTh = el('oTh'), oTp = el('oTp'), oFl = el('oFl'), oMW = el('oMW'), oVolt = el('oVolt');
-const pGrid = el('pGrid'), badge = el('badge'), bDot = el('bDot'), log = el('log'), bExp = el('bExp'), bRot = el('bRot');
-
-let cap = 1000, eff = 44, mag = 95, cool = 92, trit = 100;
+let cap = 3200, eff = 68, mag = 96, cool = 94;
 let exp = false, eAmt = 0, spin = true, off = false;
-let rx = 0.45, ry = 0.58, zm = 0.98, trx = 0.45, try_ = 0.58, tzm = 0.98, camLerp = false;
+// Default camera angle matches the upward isometric angle in the video
+let rx = -0.42, ry = 0.52, zm = 1.02, trx = -0.42, try_ = 0.52, tzm = 1.02, camLerp = false;
 let t = 0, dg = false, lx = 0, ly = 0;
 
-const stars = Array.from({ length: 140 }, () => ({
-  x: (Math.random() - 0.5) * 980,
-  y: (Math.random() - 0.5) * 780,
-  z: (Math.random() - 0.5) * 700,
-  s: Math.random() * 1.5 + 0.4
-}));
-
-const pts = Array.from({ length: 360 }, (_, i) => ({
-  a: (i / 360) * Math.PI * 2,
-  tw: Math.random() * Math.PI * 2,
-  r: (Math.random() - 0.5) * 28,
-  z: (Math.random() - 0.5) * 20,
-  s: 0.018 + Math.random() * 0.036,
-  sz: 1.1 + Math.random() * 2.2
-}));
-
-const pulses = Array.from({ length: 84 }, (_, i) => ({
-  a: (i / 84) * Math.PI * 2,
-  p: Math.random(),
-  s: 0.012 + Math.random() * 0.018
+const sparks = Array.from({ length: 180 }, (_, i) => ({
+  a: (i / 180) * Math.PI * 2,
+  r: 72 + (Math.random() - 0.5) * 26,
+  y: (Math.random() - 0.5) * 18,
+  s: 0.025 + Math.random() * 0.04,
+  sz: 1.2 + Math.random() * 2.2
 }));
 
 function lg(m) { log.innerHTML = `<div>> ${m}</div>` + log.innerHTML; }
-function sd(id, tx, w) { const e = el(id); e.querySelector('b').textContent = tx; e.className = w ? 'item warn' : 'item'; }
+  function sd(id, tx, w) { const e = el(id); e.querySelector('b').textContent = tx; e.className = w ? 'item warn' : 'item'; }
 function setCam(nrx, nry, nzm) { trx = nrx; try_ = nry; tzm = nzm; camLerp = true; }
 
 function sync() {
-  cap = +sCap.value; eff = +sEff.value; mag = +sMag.value; cool = +sCool.value; trit = +sTrit.value;
-  vCap.textContent = cap.toLocaleString() + ' MWth';
+  cap = +sCap.value; eff = +sEff.value; mag = +sMag.value; cool = +sCool.value;
+  vCap.textContent = (cap / 1000).toFixed(1) + ' GJ/s';
   vEff.textContent = eff + '%';
   vMag.textContent = mag + '%';
   vCool.textContent = cool + '%';
-  vTrit.textContent = trit + '%';
 
-  const lk = trit < 75, lc = cool < 55, lm = mag < 60;
-  off = lm || cool < 35;
-  const th = off ? 0 : cap, mw = Math.round(th * (eff / 100));
+  const warn = cool < 55 || mag < 65;
+  off = mag < 48 || cool < 32;
+  const th = off ? 0 : cap;
+  const mw = Math.round(th * (eff / 100));
 
   oTh.textContent = th.toLocaleString() + ' MWth';
-  oTp.textContent = off ? 'Plasma Quenched (Safe)' : 'Core Temp: ' + Math.round(115 + (cap / 15000) * 35 + (100 - cool) * 0.8) + ' Million °C';
-  oFl.textContent = off ? '290 °C (Standby)' : Math.round(620 + (cap / 15000) * 140 + (100 - cool) * 1.2) + ' °C Molten Salt';
+  oTp.textContent = off ? 'Arc Extinguished' : `Arc Temp: ${Math.round(12000 + (cap / 10000) * 6500)} K • Ionized`;
+  oCu.textContent = off ? '0 Amps' : `${Math.round(mw * 22.1).toLocaleString()} Amps`;
   oMW.textContent = mw.toLocaleString() + ' MWe';
-  oVolt.textContent = (off ? '0.0 kV' : (22 + (mw / 9750) * 14).toFixed(1) + ' kV AC') + ' • ' + ((mw * 8760 * 0.9) / 1e6).toFixed(2) + ' TWh/yr';
-  pGrid.textContent = '4. ' + mw.toLocaleString() + ' MWe GRID';
+  oVolt.textContent = off ? '0.0 kV' : `${(14 + (mw / 8500) * 12).toFixed(1)} kV DC Bus`;
 
-  sd('d1', lk ? 'BREACH' : 'SEALED', lk);
-  sd('d2', lk ? 'ISOLATED (<30s)' : 'STANDBY', lk);
-  sd('d3', off ? 'OFFLINE' : (lc ? 'DERATED' : 'LOCKED'), off || lc);
-  sd('d4', off ? 'TRIGGERED' : 'ARMED', off);
+  sd('d1', 'LOCKED', false);
+  sd('d2', off ? 'OFFLINE' : (warn ? 'FLUCTUATING' : 'STABLE'), off || warn);
+  sd('d3', off ? 'IDLE' : (cool < 55 ? 'HOT' : 'OPTIMAL'), off || cool < 55);
+  sd('d4', off ? 'TRIPPED' : 'ARMED', off);
 
-  badge.textContent = off ? 'SAFE SHUTDOWN // OFFLINE' : (lk || lc ? 'ALERT // DEFENSE ACTIVE' : 'NOMINAL // 5-STAGE ACTIVE');
-  const col = off ? '#ff1e42' : (lk || lc ? '#ffd000' : '#00ff88');
+  badge.textContent = off ? 'SAFE SHUTDOWN // CORE OFFLINE' : (warn ? 'ALERT // FLUX INSTABILITY' : 'NOMINAL // PLASMA LOCK ACTIVE');
+  const col = off ? '#f43f5e' : (warn ? '#f59e0b' : '#10b981');
   badge.style.color = col; badge.style.borderColor = col;
-  bDot.style.background = off ? '#ff1e42' : '#00f0ff';
+  bDot.style.background = off ? '#f43f5e' : '#00a8ff';
 }
 
 function flt(k) {
-  if (k === 'trit') { sTrit.value = 55; lg('Tritium leak -> 30s room isolation active.'); }
-  if (k === 'cool') { sCool.value = 30; lg('Cooling loss -> Converter tripped & plasma quenched.'); }
-  if (k === 'mag') { sMag.value = 45; lg('Magnet quench -> Energy dumped safely.'); }
-  if (k === 'plas') { sMag.value = 50; lg('Plasma disruption -> Magnetic shutdown.'); }
+  if (k === 'mag') { sMag.value = 44; lg('Magnetic ring flux drop -> Plasma arc quenched.'); }
+  if (k === 'cool') { sCool.value = 28; lg('Cryo-cooling fault -> Thermal shutdown.'); }
   sync();
 }
 
 function rst() {
-  sCap.value = 1000; sEff.value = 44; sMag.value = 95; sCool.value = 92; sTrit.value = 100;
-  exp = false; setCam(0.45, 0.58, 0.98); bExp.className = ''; log.innerHTML = '';
-  lg('5-Stage ARC-X Converter online (440 MWe).');
+  sCap.value = 3200; sEff.value = 68; sMag.value = 96; sCool.value = 94;
+  exp = false; bExp.className = ''; setCam(-0.42, 0.52, 1.02); log.innerHTML = '';
+  lg('ARC-MK4 Plasma Converter online.');
   sync();
 }
 
-[sCap, sEff, sMag, sCool, sTrit].forEach(e => e.oninput = sync);
-
-bExp.onclick = () => {
-  exp = !exp;
-  bExp.className = exp ? 'active' : '';
-  lg(exp ? 'Exploded View ON: Showing all 5 conversion stages.' : 'Standard reactor assembly.');
-};
-bRot.onclick = () => {
-  spin = !spin;
-  bRot.className = spin ? 'active' : '';
-  bRot.textContent = 'Auto-Orbit: ' + (spin ? 'ON' : 'OFF');
-};
+[sCap, sEff, sMag, sCool].forEach(e => e.oninput = sync);
+bExp.onclick = () => { exp = !exp; bExp.className = exp ? 'active' : ''; lg(exp ? 'Exploded View: Separating housing, plasma ring & copper core.' : 'Assembly locked.'); };
+bRot.onclick = () => { spin = !spin; bRot.className = spin ? 'active' : ''; bRot.textContent = 'Auto-Spin: ' + (spin ? 'ON' : 'OFF'); };
 
 vp.onmousedown = e => { dg = true; camLerp = false; lx = e.clientX; ly = e.clientY; };
 window.onmouseup = () => dg = false;
@@ -447,46 +364,86 @@ window.onmousemove = e => {
   rx = Math.max(-1.45, Math.min(1.45, rx + (e.clientY - ly) * 0.008));
   lx = e.clientX; ly = e.clientY;
 };
-vp.onwheel = e => {
-  e.preventDefault();
-  camLerp = false;
-  zm = Math.min(1.85, Math.max(0.55, zm - e.deltaY * 0.0008));
-};
+vp.onwheel = e => { e.preventDefault(); camLerp = false; zm = Math.min(1.85, Math.max(0.55, zm - e.deltaY * 0.0008)); };
 
 function P(px, py, pz, cx, cy) {
-  const cy1 = Math.cos(ry), sy1 = Math.sin(ry), cx1 = Math.cos(rx), sx1 = Math.sin(rx);
-  const x1 = px * cy1 - pz * sy1, z1 = pz * cy1 + px * sy1;
-  const y2 = py * cx1 - z1 * sx1, z2 = z1 * cx1 + py * sx1;
-  const f = 580 * zm, s = f / (f + z2 + 280);
+  const cy1 = Math.cos(ry), sy1 = Math.sin(ry);
+  const cx1 = Math.cos(rx), sx1 = Math.sin(rx);
+  const x1 = px * cy1 - pz * sy1;
+  const z1 = pz * cy1 + px * sy1;
+  const y2 = py * cx1 - z1 * sx1;
+  const z2 = z1 * cx1 + py * sx1;
+  const f = 600 * zm;
+  const s = f / (f + z2 + 300);
   return { x: cx + x1 * s, y: cy + y2 * s, z: z2, s };
 }
 
-function drawMetallicRing(r, z, n, col, rimCol, w, cx, cy) {
-  for (let i = 0; i < n; i++) {
-    const a1 = (i / n) * Math.PI * 2, a2 = ((i + 1) / n) * Math.PI * 2;
-    const p1 = P(Math.cos(a1) * r, Math.sin(a1) * r, z, cx, cy);
-    const p2 = P(Math.cos(a2) * r, Math.sin(a2) * r, z, cx, cy);
-    x.strokeStyle = col;
-    x.lineWidth = w * p1.s;
-    x.beginPath(); x.moveTo(p1.x, p1.y); x.lineTo(p2.x, p2.y); x.stroke();
-    if (p1.z < 30) {
-      x.strokeStyle = rimCol;
-      x.lineWidth = Math.max(1, w * 0.3 * p1.s);
-      x.beginPath(); x.moveTo(p1.x, p1.y - 1.5); x.lineTo(p2.x, p2.y - 1.5); x.stroke();
+function drawFlange(rOuter, rInner, yPos, thickness, segs, baseCol, rimCol, cx, cy) {
+  for (let i = 0; i < segs; i++) {
+    const a1 = (i / segs) * Math.PI * 2;
+    const a2 = ((i + 1) / segs) * Math.PI * 2;
+    const p1 = P(Math.cos(a1) * rOuter, yPos, Math.sin(a1) * rOuter, cx, cy);
+    const p2 = P(Math.cos(a2) * rOuter, yPos, Math.sin(a2) * rOuter, cx, cy);
+    const p3 = P(Math.cos(a2) * rOuter, yPos + thickness, Math.sin(a2) * rOuter, cx, cy);
+    const p4 = P(Math.cos(a1) * rOuter, yPos + thickness, Math.sin(a1) * rOuter, cx, cy);
+
+    x.fillStyle = p1.z < 0 ? rimCol : baseCol;
+    x.beginPath();
+    x.moveTo(p1.x, p1.y); x.lineTo(p2.x, p2.y); x.lineTo(p3.x, p3.y); x.lineTo(p4.x, p4.y);
+    x.closePath();
+    x.fill();
+
+    if (rInner > 0) {
+      const i1 = P(Math.cos(a1) * rInner, yPos + thickness, Math.sin(a1) * rInner, cx, cy);
+      const i2 = P(Math.cos(a2) * rInner, yPos + thickness, Math.sin(a2) * rInner, cx, cy);
+      x.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+      x.lineWidth = 1.5;
+      x.beginPath(); x.moveTo(i1.x, i1.y); x.lineTo(i2.x, i2.y); x.stroke();
     }
   }
 }
 
-function drawFloor(cx, cy) {
-  const fz = 195, gs = 360, st = 60;
-  x.lineWidth = 1;
-  for (let g = -gs; g <= gs; g += st) {
-    x.strokeStyle = `rgba(0, 240, 255, ${(1 - Math.abs(g) / 420) * 0.14})`;
-    const p1 = P(g, -gs, fz, cx, cy), p2 = P(g, gs, fz, cx, cy);
-    x.beginPath(); x.moveTo(p1.x, p1.y); x.lineTo(p2.x, p2.y); x.stroke();
-    const p3 = P(-gs, g, fz, cx, cy), p4 = P(gs, g, fz, cx, cy);
-    x.beginPath(); x.moveTo(p3.x, p3.y); x.lineTo(p4.x, p4.y); x.stroke();
+function drawCopperCore(r, yTop, height, cx, cy) {
+  const segs = 48;
+  for (let i = 0; i < segs; i++) {
+    const a1 = (i / segs) * Math.PI * 2;
+    const a2 = ((i + 1) / segs) * Math.PI * 2;
+    const p1 = P(Math.cos(a1) * r, yTop, Math.sin(a1) * r, cx, cy);
+    const p2 = P(Math.cos(a2) * r, yTop, Math.sin(a2) * r, cx, cy);
+    const p3 = P(Math.cos(a2) * r, yTop + height, Math.sin(a2) * r, cx, cy);
+    const p4 = P(Math.cos(a1) * r, yTop + height, Math.sin(a1) * r, cx, cy);
+
+    const shade = Math.cos(a1 + ry);
+    x.fillStyle = shade > 0.3 ? '#f59e6c' : (shade > -0.3 ? '#c86432' : '#7c3614');
+    x.beginPath();
+    x.moveTo(p1.x, p1.y); x.lineTo(p2.x, p2.y); x.lineTo(p3.x, p3.y); x.lineTo(p4.x, p4.y);
+    x.closePath();
+    x.fill();
   }
+
+  const turns = 12;
+  for (let k = 0; k <= turns; k++) {
+    const wy = yTop + (k / turns) * height;
+    x.strokeStyle = k % 3 === 0 ? '#1e293b' : 'rgba(255, 215, 180, 0.45)';
+    x.lineWidth = k % 3 === 0 ? 3 : 1.2;
+    x.beginPath();
+    for (let s = 0; s <= 48; s++) {
+      const a = (s / 48) * Math.PI * 2;
+      const p = P(Math.cos(a) * (r + 1.5), wy, Math.sin(a) * (r + 1.5), cx, cy);
+      s === 0 ? x.moveTo(p.x, p.y) : x.lineTo(p.x, p.y);
+    }
+    x.stroke();
+  }
+
+  x.fillStyle = '#47210e';
+  x.beginPath();
+  for (let s = 0; s <= 48; s++) {
+    const a = (s / 48) * Math.PI * 2;
+    const p = P(Math.cos(a) * r, yTop + height, Math.sin(a) * r, cx, cy);
+    s === 0 ? x.moveTo(p.x, p.y) : x.lineTo(p.x, p.y);
+  }
+  x.closePath();
+  x.fill();
 }
 
 function callout(px, py, pz, tx, ty, title, sub, col, cx, cy) {
@@ -503,187 +460,106 @@ function callout(px, py, pz, tx, ty, title, sub, col, cx, cy) {
   const bw = Math.max(w1, w2) + 14;
   const bx = tx > 0 ? endX + 4 : endX - bw - 4;
 
-  x.fillStyle = 'rgba(4, 10, 22, 0.88)';
+  x.fillStyle = 'rgba(5, 9, 18, 0.9)';
   x.strokeStyle = col; x.lineWidth = 1;
   x.fillRect(bx, ey - 14, bw, 28);
   x.strokeRect(bx, ey - 14, bw, 28);
 
   x.fillStyle = col; x.font = 'bold 11px Segoe UI, sans-serif';
   x.fillText(title, bx + 7, ey - 2);
-  x.fillStyle = '#cbe8f0'; x.font = '10px Segoe UI, sans-serif';
+  x.fillStyle = '#cbd5e1'; x.font = '10px Segoe UI, sans-serif';
   x.fillText(sub, bx + 7, ey + 10);
-}
-
-function drawScope(mc) {
-  const w = scope.width, h = scope.height;
-  sx.fillStyle = '#010308'; sx.fillRect(0, 0, w, h);
-  sx.strokeStyle = 'rgba(0, 240, 255, 0.12)'; sx.lineWidth = 1;
-  sx.beginPath(); sx.moveTo(0, h / 2); sx.lineTo(w, h / 2); sx.stroke();
-
-  sx.strokeStyle = mc; sx.lineWidth = 1.8; sx.beginPath();
-  for (let i = 0; i < w; i += 3) {
-    const amp = off ? 1.5 : (7 + (cap / 15000) * 10);
-    const y = h / 2 + Math.sin(i * 0.07 + t * 5) * amp;
-    i === 0 ? sx.moveTo(i, y) : sx.lineTo(i, y);
-  }
-  sx.stroke();
-
-  if (!off) {
-    sx.strokeStyle = '#00ff88'; sx.lineWidth = 1.2; sx.beginPath();
-    for (let i = 0; i < w; i += 3) {
-      const y = h / 2 + Math.sin(i * 0.1 - t * 3.5) * (5 + (eff / 65) * 8);
-      i === 0 ? sx.moveTo(i, y) : sx.lineTo(i, y);
-    }
-    sx.stroke();
-  }
 }
 
 function loop() {
   const w = vp.clientWidth || 700, h = vp.clientHeight || 550;
   if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
 
-  t += 0.022;
+  t += 0.025;
   if (camLerp) {
     rx += (trx - rx) * 0.08; ry += (try_ - ry) * 0.08; zm += (tzm - zm) * 0.08;
     if (Math.abs(trx - rx) < 0.002 && Math.abs(tzm - zm) < 0.002) camLerp = false;
   } else if (spin && !dg) {
-    ry += 0.0045;
+    ry += 0.005;
   }
   eAmt += ((exp ? 1 : 0) - eAmt) * 0.08;
 
-  const bg = x.createRadialGradient(w / 2, h / 2, 20, w / 2, h / 2, Math.max(w, h) * 0.75);
-  bg.addColorStop(0, '#0a2142'); bg.addColorStop(0.55, '#030b1a'); bg.addColorStop(1, '#010308');
-  x.fillStyle = bg; x.fillRect(0, 0, w, h);
+  x.clearRect(0, 0, w, h);
+  const cx = w / 2, cy = h / 2 - 15;
 
-  const cx = w / 2, cy = h / 2;
-  const wn = trit < 75 || cool < 55;
-  const mc = off ? '#ff1e42' : (wn ? '#ffd000' : '#00f0ff');
-  const rgb = off ? '255,30,66' : (wn ? '255,208,0' : '0,240,255');
+  const warn = cool < 55 || mag < 65;
+  const plasmaCol = off ? '#f43f5e' : (warn ? '#f59e0b' : '#00b4ff');
+  const plasmaRgb = off ? '244, 63, 94' : (warn ? '245, 158, 11' : '0, 180, 255');
 
-  drawFloor(cx, cy);
+  const yCap = -85 - eAmt * 65;
+  const yHousing = -35 - eAmt * 20;
+  const yPlasma = 10 + eAmt * 25;
+  const yCopper = 15 + eAmt * 75;
 
-  x.fillStyle = 'rgba(0,240,255,0.28)';
-  stars.forEach(d => {
-    const p = P(d.x, d.y, d.z, cx, cy);
-    x.beginPath(); x.arc(p.x, p.y, d.s * p.s, 0, Math.PI * 2); x.fill();
-  });
+  const glowRad = (135 + (cap / 10000) * 45) * zm;
+  const plasmaCenter = P(0, yPlasma, 0, cx, cy);
+  const aura = x.createRadialGradient(plasmaCenter.x, plasmaCenter.y, 12, plasmaCenter.x, plasmaCenter.y, glowRad);
+  aura.addColorStop(0, `rgba(255, 255, 255, ${off ? 0.1 : 0.9})`);
+  aura.addColorStop(0.28, `rgba(${plasmaRgb}, ${off ? 0.2 : 0.65})`);
+  aura.addColorStop(0.65, `rgba(${plasmaRgb}, 0.15)`);
+  aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  x.fillStyle = aura;
+  x.beginPath();
+  x.arc(plasmaCenter.x, plasmaCenter.y, glowRad, 0, Math.PI * 2);
+  x.fill();
 
-  const ps = 1 + (cap / 15000) * 0.45;
-  const bl = x.createRadialGradient(cx, cy, 6, cx, cy, 240 * zm * ps);
-  bl.addColorStop(0, `rgba(255,255,255,${off ? 0.15 : 0.8})`);
-  bl.addColorStop(0.22, `rgba(${rgb},${off ? 0.25 : 0.55})`);
-  bl.addColorStop(0.6, `rgba(${rgb},0.12)`);
-  bl.addColorStop(1, 'rgba(0,0,0,0)');
-  x.fillStyle = bl; x.beginPath(); x.arc(cx, cy, 240 * zm * ps, 0, Math.PI * 2); x.fill();
+  drawFlange(115, 0, yCap, 28, 48, '#0f172a', '#1e293b', cx, cy);
+  drawFlange(142, 102, yHousing, 46, 56, '#111827', '#334155', cx, cy);
 
-  const z5 = -180 * eAmt, z4 = -90 * eAmt, z3 = -25 * eAmt, z2 = 35 * eAmt, z1 = 135 * eAmt;
-
-  if (eAmt > 0.05) {
-    const a1 = P(0, 0, z5 - 20, cx, cy), a2 = P(0, 0, z1 + 20, cx, cy);
-    x.save(); x.setLineDash([6, 6]);
-    x.strokeStyle = `rgba(0,240,255,${0.4 * eAmt})`; x.lineWidth = 1.5;
-    x.beginPath(); x.moveTo(a1.x, a1.y); x.lineTo(a2.x, a2.y); x.stroke();
-    x.restore();
-  }
-
-  // Stage 5: Grid Transformer
-  drawMetallicRing(215, z5, 84, off ? 'rgba(255,30,66,0.45)' : 'rgba(0,255,136,0.78)', '#a7f3d0', 4, cx, cy);
-  drawMetallicRing(195, z5, 84, 'rgba(0,240,255,0.35)', '#bae6fd', 1.6, cx, cy);
-  for (let i = 0; i < 8; i++) {
-    const a = (i / 8) * Math.PI * 2 - t * 0.1;
-    const p1 = P(Math.cos(a) * 175, Math.sin(a) * 175, z5, cx, cy), p2 = P(Math.cos(a) * 215, Math.sin(a) * 215, z5, cx, cy);
-    x.strokeStyle = off ? '#ff1e42' : '#00ff88'; x.lineWidth = 4;
-    x.beginPath(); x.moveTo(p1.x, p1.y); x.lineTo(p2.x, p2.y); x.stroke();
-  }
-
-  // Stage 4: MHD & Turbine
-  drawMetallicRing(182, z4, 84, 'rgba(255,208,0,0.85)', '#fef08a', 3.4, cx, cy);
-  for (let i = 0; i < 18; i++) {
-    const a = (i / 18) * Math.PI * 2 + t * (off ? 0.02 : 0.14);
-    const p1 = P(Math.cos(a) * 142, Math.sin(a) * 142, z4, cx, cy), p2 = P(Math.cos(a) * 182, Math.sin(a) * 182, z4, cx, cy);
-    x.strokeStyle = '#ffd000'; x.lineWidth = 3.2;
-    x.beginPath(); x.moveTo(p1.x, p1.y); x.lineTo(p2.x, p2.y); x.stroke();
-  }
-
-  // Stage 3: FLiBe Molten Salt Blanket
-  drawMetallicRing(156, z3, 72, 'rgba(255,123,0,0.8)', '#fed7aa', 5.2, cx, cy);
-  drawMetallicRing(144, z3, 72, 'rgba(255,171,0,0.42)', '#fde68a', 2.2, cx, cy);
-
-  if (!off) {
-    pulses.forEach(pl => {
-      pl.p = (pl.p + pl.s * (eff / 42)) % 1;
-      const rad = 125 + pl.p * 90, curZ = z2 + (z5 - z2) * pl.p;
-      const p = P(Math.cos(pl.a + t * 0.15) * rad, Math.sin(pl.a + t * 0.15) * rad, curZ, cx, cy);
-      x.fillStyle = pl.p < 0.4 ? '#ff7b00' : (pl.p < 0.75 ? '#ffd000' : '#00ff88');
-      x.beginPath(); x.arc(p.x, p.y, 2.5 * p.s, 0, Math.PI * 2); x.fill();
-    });
-  }
-
-  // Stage 2: Depth-Sorted REBCO D-Shaped Coils
-  const coils = [];
-  for (let k = 0; k < 18; k++) {
-    const ba = (k / 18) * Math.PI * 2 + t * 0.18;
-    const cp = P(124 * Math.cos(ba), 124 * Math.sin(ba), z2, cx, cy);
-    coils.push({ k, ba, zd: cp.z });
-  }
-  coils.sort((a, b) => b.zd - a.zd);
-
-  x.shadowColor = mc; x.shadowBlur = off ? 4 : 16;
-  coils.forEach(({ k, ba }) => {
-    x.strokeStyle = k % 2 === 0 ? mc : '#ff7b00';
-    x.lineWidth = 2.6;
+  const numBolts = 16;
+  for (let b = 0; b < numBolts; b++) {
+    const ba = (b / numBolts) * Math.PI * 2 + t * 0.1;
+    const bx = Math.cos(ba) * 124;
+    const bz = Math.sin(ba) * 124;
+    const bp = P(bx, yHousing + 46, bz, cx, cy);
+    x.fillStyle = '#94a3b8';
     x.beginPath();
-    for (let s = 0; s <= 26; s++) {
-      const th = (s / 26) * Math.PI * 2;
-      const px = (124 + 26 * Math.cos(th)) * Math.cos(ba);
-      const py = (124 + 26 * Math.cos(th)) * Math.sin(ba);
-      const pz = 28 * Math.sin(th) + z2;
-      const p = P(px, py, pz, cx, cy);
+    x.arc(bp.x, bp.y, 3.2 * bp.s, 0, Math.PI * 2);
+    x.fill();
+  }
+
+  x.shadowColor = plasmaCol;
+  x.shadowBlur = off ? 5 : 28;
+  for (let ring = 0; ring < 3; ring++) {
+    const rr = 76 + ring * 8;
+    x.strokeStyle = ring === 1 ? '#ffffff' : plasmaCol;
+    x.lineWidth = ring === 1 ? 4.5 : 3;
+    x.beginPath();
+    for (let s = 0; s <= 64; s++) {
+      const a = (s / 64) * Math.PI * 2;
+      const wave = off ? 0 : Math.sin(a * 8 + t * 6 + ring) * 2.2;
+      const p = P(Math.cos(a) * (rr + wave), yPlasma + wave, Math.sin(a) * (rr + wave), cx, cy);
       s === 0 ? x.moveTo(p.x, p.y) : x.lineTo(p.x, p.y);
     }
     x.stroke();
-  });
-  x.shadowBlur = 0;
-
-  // Helical Plasma Particles
-  const spd = off ? 0.08 : 0.75 + (cap / 15000) * 2;
-  pts.forEach(pt => {
-    pt.a += pt.s * spd; pt.tw += 0.05 * spd;
-    const r = 124 + pt.r * Math.cos(pt.tw);
-    const p = P(Math.cos(pt.a) * r, Math.sin(pt.a) * r, pt.z * Math.sin(pt.tw) + z2, cx, cy);
-    x.fillStyle = Math.random() > 0.25 ? mc : '#fff';
-    x.beginPath(); x.arc(p.x, p.y, pt.sz * p.s, 0, Math.PI * 2); x.fill();
-  });
-
-  // Stage 1: Ignition Core
-  drawMetallicRing(78, z1 - 5, 64, `rgba(${rgb},0.85)`, '#fff', 3, cx, cy);
-  x.shadowColor = mc; x.shadowBlur = off ? 6 : 28;
-  for (let l = 0; l < 2; l++) {
-    const rd = l === 0 ? 62 : 44, zp = z1 + l * 14;
-    x.strokeStyle = l === 0 ? mc : '#fff'; x.lineWidth = l === 0 ? 5 : 2.5;
-    x.beginPath();
-    for (let j = 0; j < 3; j++) {
-      const an = (j * Math.PI * 2) / 3 - Math.PI / 2 + t * (l === 0 ? 0.25 : -0.4);
-      const pt = P(Math.cos(an) * rd, Math.sin(an) * rd, zp, cx, cy);
-      j === 0 ? x.moveTo(pt.x, pt.y) : x.lineTo(pt.x, pt.y);
-    }
-    x.closePath(); x.stroke();
   }
-  const pls = off ? 15 : 20 + Math.sin(t * 5) * 3.5;
-  drawMetallicRing(pls, z1 + 22, 44, '#fff', '#bae6fd', 3, cx, cy);
   x.shadowBlur = 0;
+
+  const spd = off ? 0.1 : 1.1 + (cap / 10000) * 1.8;
+  sparks.forEach(sp => {
+    sp.a += sp.s * spd;
+    const p = P(Math.cos(sp.a) * sp.r, yPlasma + sp.y + Math.sin(sp.a * 3 + t * 4) * 3, Math.sin(sp.a) * sp.r, cx, cy);
+    x.fillStyle = Math.random() > 0.3 ? plasmaCol : '#ffffff';
+    x.beginPath();
+    x.arc(p.x, p.y, sp.sz * p.s, 0, Math.PI * 2);
+    x.fill();
+  });
+
+  drawCopperCore(44, yCopper, 98, cx, cy);
 
   if (eAmt > 0.45) {
     x.globalAlpha = eAmt;
-    callout(52, -30, z1, 65, -45, '1. D-T Plasma Ignition Core', '120M °C Fusion Reaction', '#00f0ff', cx, cy);
-    callout(-124, -40, z2, -65, -55, '2. Superconducting Coils', 'Magnetic Plasma Confinement', '#4dd0e1', cx, cy);
-    callout(152, 20, z3, 70, 10, '3. FLiBe Molten-Salt Blanket', 'Captures 80% Neutron Heat', '#ff7b00', cx, cy);
-    callout(-178, 45, z4, -65, 45, '4. MHD & Brayton Turbine', 'Converts Heat & Flux to Current', '#ffd000', cx, cy);
-    callout(205, -65, z5, 65, -25, '5. Step-Up Grid Transformer', '24.8 kV AC City Grid Output', '#00ff88', cx, cy);
+    callout(95, yHousing + 20, 0, 65, -35, '1. Bolted Titanium Casing', 'Magnetic Containment Shield', '#94a3b8', cx, cy);
+    callout(-82, yPlasma, 0, -65, -10, '2. Ionized Plasma Torus', 'High-Density Blue Arc Core', '#38bdf8', cx, cy);
+    callout(44, yCopper + 55, 0, 65, 30, '3. Copper Induction Core', 'Direct Plasma-to-DC Conversion', '#e87a3d', cx, cy);
     x.globalAlpha = 1;
   }
 
-  drawScope(mc);
   requestAnimationFrame(loop);
 }
 
