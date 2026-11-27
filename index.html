@@ -2,179 +2,810 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>3D ARC Fusion Reactor // Exploded Energy Conversion Assembly</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARC-X FUSION REACTOR // NEXT-GEN 3D SIMULATION</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,sans-serif}
-  body{background:#02040a;color:#e0f7fa;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-  header{padding:10px 22px;background:rgba(4,10,22,.96);border-bottom:1px solid rgba(0,229,255,.35);display:flex;justify-content:space-between;align-items:center;z-index:10}
-  header h1{font-size:14px;color:#00e5ff;letter-spacing:2px;text-shadow:0 0 12px rgba(0,229,255,.8)}
-  #badge{padding:4px 14px;border-radius:20px;font-size:11px;font-weight:bold;letter-spacing:1px;background:rgba(0,230,118,.15);color:#00e676;border:1px solid #00e676}
-  .layout{display:grid;grid-template-columns:265px 1fr 285px;flex:1;height:calc(100vh - 44px)}
-  .panel{background:rgba(4,10,22,.92);padding:13px;border-right:1px solid rgba(0,229,255,.25);display:flex;flex-direction:column;gap:9px;overflow-y:auto;z-index:5}
-  .panel.right{border-right:none;border-left:1px solid rgba(0,229,255,.25)}
-  h3{font-size:11px;color:#80deea;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid rgba(0,229,255,.2);padding-bottom:4px}
-  .slider-box{display:flex;flex-direction:column;gap:3px;font-size:12px}
-  .slider-top{display:flex;justify-content:space-between}
-  .slider-top b{color:#00e5ff}
-  input[type=range]{width:100%;accent-color:#00e5ff;cursor:pointer}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-  button{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.4);color:#e0f7fa;padding:8px;border-radius:5px;font-size:11px;cursor:pointer;text-transform:uppercase;transition:.2s}
-  button:hover{background:rgba(0,229,255,.25);border-color:#00e5ff}
-  button.active{background:#00e5ff;color:#020813;font-weight:bold;box-shadow:0 0 14px rgba(0,229,255,.75)}
-  button.red{border-color:rgba(255,23,68,.55);color:#ff8a80}
-  button.red:hover{background:rgba(255,23,68,.3);color:#fff}
-  button.reset{margin-top:auto;background:rgba(0,230,118,.15);border-color:#00e676;color:#00e676;font-weight:bold}
-  button.reset:hover{background:#00e676;color:#020813}
-  #vp{position:relative;width:100%;height:100%;cursor:grab;overflow:hidden;background:#010308}
-  #vp:active{cursor:grabbing}
-  canvas{display:block;width:100%;height:100%}
-  .pipeline{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:rgba(3,9,20,.88);padding:6px 14px;border-radius:20px;border:1px solid rgba(0,229,255,.3);font-size:11px;pointer-events:none;white-space:nowrap}
-  .step{padding:2px 8px;border-radius:10px;font-weight:bold}
-  .hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#80deea;background:rgba(2,6,14,.85);padding:5px 14px;border-radius:12px;border:1px solid rgba(0,229,255,.3);pointer-events:none;white-space:nowrap}
-  .card{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.25);padding:8px 10px;border-radius:6px}
-  .card small{color:#80deea;font-size:10px;display:block;text-transform:uppercase}
-  .card strong{font-size:16px;color:#00e5ff;text-shadow:0 0 10px rgba(0,229,255,.5)}
-  .item{display:flex;justify-content:space-between;font-size:11px;padding:5px 8px;background:rgba(255,255,255,.04);border-left:3px solid #00e676;border-radius:4px}
-  .item.warn{border-left-color:#ffab00;color:#ffe57f;background:rgba(255,171,0,.1)}
-  #log{background:#010206;border:1px solid rgba(0,229,255,.25);padding:7px;height:80px;overflow-y:auto;font-size:11px;color:#80deea;border-radius:4px;line-height:1.35}
+  @import url('https://googleapis.com');
+
+  :root {
+    --cyan: #00f0ff;
+    --orange: #ff7b00;
+    --gold: #ffd000;
+    --green: #00ff88;
+    --red: #ff1e42;
+    --glass: rgba(8, 16, 30, 0.72);
+    --border: rgba(0, 240, 255, 0.28);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+  body {
+    background: #020409;
+    color: #e6f9ff;
+    font-family: 'Rajdhani', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #webgl-container {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    cursor: grab;
+  }
+  #webgl-container:active { cursor: grabbing; }
+
+  /* Subtle cinematic vignette & scanlines */
+  .vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background: radial-gradient(circle at center, transparent 52%, rgba(0, 2, 8, 0.85) 100%);
+  }
+
+  /* Top Header Bar */
+  header {
+    position: fixed;
+    top: 14px;
+    left: 16px;
+    right: 16px;
+    height: 52px;
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 240, 255, 0.05);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 12px var(--cyan);
+    animation: pulse 1.5s infinite;
+  }
+  header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    color: #fff;
+    text-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+  }
+  header h1 span { color: var(--cyan); }
+
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+  }
+  .pipe-arrow { color: rgba(255,255,255,0.3); }
+
+  #badge {
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    background: rgba(0, 255, 136, 0.12);
+    color: var(--green);
+    border: 1px solid var(--green);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.25);
+    transition: all 0.3s ease;
+  }
+
+  /* Floating Glass Sidebars */
+  .panel {
+    position: fixed;
+    top: 80px;
+    bottom: 16px;
+    width: 285px;
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 10;
+    overflow-y: auto;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+  }
+  .panel.left { left: 16px; }
+  .panel.right { right: 16px; width: 300px; }
+
+  .panel::-webkit-scrollbar { width: 4px; }
+  .panel::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.3); border-radius: 4px; }
+
+  h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    color: var(--cyan);
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    padding-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Custom Sliders */
+  .slider-box {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .slider-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+    color: #b8e4f0;
+  }
+  .slider-top b {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    color: var(--cyan);
+    font-variant-numeric: tabular-nums;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 240, 255, 0.18);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.25); }
+
+  /* Buttons */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  button {
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    color: #e6f9ff;
+    padding: 9px 8px;
+    border-radius: 6px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+  }
+  button:hover {
+    background: rgba(0, 240, 255, 0.22);
+    border-color: var(--cyan);
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.3);
+  }
+  button.active {
+    background: var(--cyan);
+    color: #020813;
+    box-shadow: 0 0 18px rgba(0, 240, 255, 0.7);
+  }
+  button.red {
+    background: rgba(255, 30, 66, 0.08);
+    border-color: rgba(255, 30, 66, 0.45);
+    color: #ff8fa3;
+  }
+  button.red:hover {
+    background: rgba(255, 30, 66, 0.28);
+    border-color: var(--red);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255, 30, 66, 0.4);
+  }
+  button.reset {
+    margin-top: auto;
+    background: rgba(0, 255, 136, 0.12);
+    border-color: var(--green);
+    color: var(--green);
+    padding: 11px;
+  }
+  button.reset:hover {
+    background: var(--green);
+    color: #020813;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+  }
+
+  /* Telemetry Cards */
+  .card {
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(0, 15, 35, 0.5));
+    border: 1px solid rgba(0, 240, 255, 0.22);
+    border-left: 3px solid var(--cyan);
+    padding: 10px 12px;
+    border-radius: 6px;
+  }
+  .card.orange { border-left-color: var(--orange); }
+  .card.green { border-left-color: var(--green); }
+  .card small {
+    color: #8cc8d8;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    display: block;
+    text-transform: uppercase;
+  }
+  .card strong {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    color: #fff;
+    text-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+    display: block;
+    margin: 2px 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Status Rows */
+  .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 3px solid var(--green);
+    border-radius: 4px;
+  }
+  .item b { font-family: 'Orbitron', sans-serif; font-size: 10px; color: var(--green); }
+  .item.warn { border-left-color: var(--gold); background: rgba(255, 208, 0, 0.1); }
+  .item.warn b { color: var(--gold); }
+
+  #log {
+    background: rgba(1, 4, 10, 0.85);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    padding: 8px;
+    height: 95px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 11px;
+    color: #80deea;
+    border-radius: 6px;
+    line-height: 1.45;
+  }
+
+  /* 3D Floating Callout Labels */
+  #labels-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .callout-3d {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    background: rgba(4, 12, 24, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--cyan);
+    border-radius: 6px;
+    padding: 6px 10px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+  }
+  .callout-3d h4 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .callout-3d p {
+    font-size: 11px;
+    color: #cbe8f0;
+  }
+
+  .hint {
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #9be7f5;
+    background: rgba(4, 12, 24, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 6px 18px;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
 </style>
 </head>
 <body>
+
+<div id="webgl-container"></div>
+<div class="vignette"></div>
+<div id="labels-layer">
+  <div class="callout-3d" id="lbl1" style="border-color:#00f0ff"><h4 style="color:#00f0ff">1. D-T PLASMA CORE</h4><p>120M °C Magnetic Fusion Torus</p></div>
+  <div class="callout-3d" id="lbl2" style="border-color:#4dd0e1"><h4 style="color:#4dd0e1">2. REBCO TF MAGNET COILS</h4><p>20-Tesla Superconducting Confinement</p></div>
+  <div class="callout-3d" id="lbl3" style="border-color:#ff7b00"><h4 style="color:#ff7b00">3. FLIBE MOLTEN SALT BLANKET</h4><p>80% Neutron Kinetic Capture & Breeding</p></div>
+  <div class="callout-3d" id="lbl4" style="border-color:#ffd000"><h4 style="color:#ffd000">4. MHD & BRAYTON TURBINE</h4><p>Direct Magnetohydrodynamic Conversion</p></div>
+  <div class="callout-3d" id="lbl5" style="border-color:#00ff88"><h4 style="color:#00ff88">5. STEP-UP GRID TRANSFORMER</h4><p>High-Voltage AC Utility Sync</p></div>
+</div>
+
 <header>
-  <h1>ARC FUSION REACTOR // PLASMA-TO-ELECTRICAL CONVERTER</h1>
+  <div class="brand">
+    <div class="brand-dot" id="bDot"></div>
+    <h1>ARC-X <span>//</span> FUSION ENERGY CONVERTER</h1>
+     </div>
+  <div class="pipeline">
+    <span style="color:#00f0ff">1. D-T PLASMA</span>
+    <span class="pipe-arrow">➔</span>
+    <span style="color:#ff7b00">2. FLIBE BLANKET</span>
+    <span class="pipe-arrow">➔</span>
+    <span style="color:#ffd000">3. MHD TURBINE</span>
+    <span class="pipe-arrow">➔</span>
+    <span style="color:#00ff88" id="pGrid">4. 440 MWe GRID</span>
+  </div>
   <div id="badge">NOMINAL // 5-STAGE CONVERSION ACTIVE</div>
 </header>
-<div class="layout">
-  <div class="panel">
-    <h3>Reactor & Converter Controls</h3>
-    <div class="slider-box"><div class="slider-top"><span>Plasma Thermal Input</span><b id="vCap">1,000 MWth</b></div><input type="range" id="sCap" min="500" max="15000" step="100" value="1000"></div>
-    <div class="slider-box"><div class="slider-top"><span>Conversion Efficiency</span><b id="vEff">44%</b></div><input type="range" id="sEff" min="25" max="65" value="44"></div>
-    <div class="slider-box"><div class="slider-top"><span>Magnetic Confinement</span><b id="vMag">95%</b></div><input type="range" id="sMag" min="40" max="100" value="95"></div>
-    <div class="slider-box"><div class="slider-top"><span>FLiBe & Cooling Flow</span><b id="vCool">92%</b></div><input type="range" id="sCool" min="20" max="100" value="92"></div>
-    <div class="slider-box"><div class="slider-top"><span>Tritium Containment</span><b id="vTrit">100%</b></div><input type="range" id="sTrit" min="40" max="100" value="100"></div>
-    <h3>3D Assembly Inspection</h3>
-    <div class="grid2"><button id="bExp">Exploded View</button><button id="bRot" class="active">Auto-Orbit: ON</button></div>
-    <h3>Inject Failure</h3>
-    <div class="grid2"><button class="red" onclick="flt('trit')">Tritium Leak</button><button class="red" onclick="flt('cool')">Cooling Loss</button><button class="red" onclick="flt('mag')">Magnet Quench</button><button class="red" onclick="flt('plas')">Disruption</button></div>
-    <button class="reset" onclick="rst()">Reset All Systems</button>
+
+<div class="panel left">
+  <h3>Reactor Parameters</h3>
+  <div class="slider-box"><div class="slider-top"><span>Plasma Thermal Input</span><b id="vCap">1,000 MWth</b></div><input type="range" id="sCap" min="500" max="15000" step="100" value="1000"></div>
+  <div class="slider-box"><div class="slider-top"><span>Conversion Efficiency</span><b id="vEff">44%</b></div><input type="range" id="sEff" min="25" max="65" value="44"></div>
+  <div class="slider-box"><div class="slider-top"><span>Magnetic Confinement</span><b id="vMag">95%</b></div><input type="range" id="sMag" min="40" max="100" value="95"></div>
+  <div class="slider-box"><div class="slider-top"><span>FLiBe Coolant Flow</span><b id="vCool">92%</b></div><input type="range" id="sCool" min="20" max="100" value="92"></div>
+  <div class="slider-box"><div class="slider-top"><span>Tritium Containment</span><b id="vTrit">100%</b></div><input type="range" id="sTrit" min="40" max="100" value="100"></div>
+
+  <h3>3D Assembly View</h3>
+  <div class="grid2">
+    <button id="bExp">Exploded View</button>
+    <button id="bRot" class="active">Auto-Orbit: ON</button>
   </div>
-  <div id="vp">
-    <div class="pipeline"><span class="step" style="color:#00e5ff">1. D-T Plasma</span>➔<span class="step" style="color:#ff9100">2. FLiBe Blanket</span>➔<span class="step" style="color:#ffd740">3. MHD & Turbine</span>➔<span class="step" style="color:#00e676" id="pGrid">4. 440 MWe Grid</span></div>
-    <canvas id="c"></canvas>
-    <div class="hint">Click "Exploded View" to Separate All 5 Conversion Stages • Drag to Rotate • Scroll to Zoom</div>
+
+  <h3>Failure Simulation</h3>
+  <div class="grid2">
+    <button class="red" onclick="flt('trit')">Tritium Leak</button>
+    <button class="red" onclick="flt('cool')">Cooling Loss</button>
+    <button class="red" onclick="flt('mag')">Magnet Quench</button>
+    <button class="red" onclick="flt('plas')">Disruption</button>
   </div>
-  <div class="panel right">
-    <h3>Energy Conversion Telemetry</h3>
-    <div class="card"><small>Stage 1: Fusion Plasma Power</small><strong id="oTh">1,000 MWth</strong><small id="oTp">Core Temp: 120 Million °C</small></div>
-    <div class="card"><small>Stage 2: FLiBe Blanket Heat</small><strong id="oFl">680 °C Molten Salt</strong><small id="oMd">80% Neutron Kinetic Capture</small></div>
-    <div class="card"><small>Stage 3–4: Net Grid Output</small><strong id="oMW">440 MWe</strong><small id="oVolt">24.8 kV AC • 3.47 TWh/yr</small></div>
-    <h3>Defense-in-Depth</h3>
-    <div class="item" id="d1"><span>Double Containment</span><b>SEALED</b></div>
-    <div class="item" id="d2"><span>30s Room Isolation</span><b>STANDBY</b></div>
-    <div class="item" id="d3"><span>MHD / Turbine Sync</span><b>LOCKED</b></div>
-    <div class="item" id="d4"><span>Auto Plasma Shutdown</span><b>ARMED</b></div>
-    <h3>Safety Event Log</h3>
-    <div id="log"></div>
-  </div>
+
+  <button class="reset" onclick="rst()">Reset All Systems</button>
 </div>
-<script>
-const c=document.getElementById('c'),x=c.getContext('2d'),vp=document.getElementById('vp');
-let cap=1000,eff=44,mag=95,cool=92,trit=100,exp=false,eAmt=0,spin=true,off=false,rx=0.45,ry=0.58,zm=0.98,t=0,dg=false,lx=0,ly=0;
-const stars=Array.from({length:120},()=>({x:(Math.random()-.5)*980,y:(Math.random()-.5)*780,z:(Math.random()-.5)*700,s:Math.random()*1.5+.4}));
-const pts=Array.from({length:300},(_,i)=>({a:(i/300)*Math.PI*2,r:(Math.random()-.5)*28,z:(Math.random()-.5)*20,s:.018+Math.random()*.036,sz:1.1+Math.random()*2.1}));
-const pulses=Array.from({length:72},(_,i)=>({a:(i/72)*Math.PI*2,p:Math.random(),s:.012+Math.random()*.018}));
-function lg(m){log.innerHTML=`<div>> ${m}</div>`+log.innerHTML;}
-function sd(id,tx,w){const e=document.getElementById(id);e.querySelector('b').textContent=tx;e.className=w?'item warn':'item';}
-function sync(){
-  cap=+sCap.value;eff=+sEff.value;mag=+sMag.value;cool=+sCool.value;trit=+sTrit.value;
-  vCap.textContent=cap.toLocaleString()+' MWth';vEff.textContent=eff+'%';vMag.textContent=mag+'%';vCool.textContent=cool+'%';vTrit.textContent=trit+'%';
-  const lk=trit<75,lc=cool<55,lm=mag<60;off=lm||cool<35;
-  const th=off?0:cap,mw=Math.round(th*(eff/100));
-  oTh.textContent=th.toLocaleString()+' MWth';
-  oTp.textContent=off?'Plasma Quenched (Safe)':'Core Temp: '+Math.round(115+(cap/15000)*35+(100-cool)*.8)+' Million °C';
-  oFl.textContent=off?'290 °C (Standby)':Math.round(620+(cap/15000)*140+(100-cool)*1.2)+' °C Molten Salt';
-  oMW.textContent=mw.toLocaleString()+' MWe';
-  oVolt.textContent=(off?'0.0 kV':(22+(mw/9750)*14).toFixed(1)+' kV AC')+' • '+((mw*8760*.9)/1e6).toFixed(2)+' TWh/yr';
-  pGrid.textContent='4. '+mw.toLocaleString()+' MWe Grid';
-  sd('d1',lk?'BREACH':'SEALED',lk);sd('d2',lk?'ISOLATED (<30s)':'STANDBY',lk);
-  sd('d3',off?'OFFLINE':(lc?'DERATED':'LOCKED'),off||lc);sd('d4',off?'TRIGGERED':'ARMED',off);
-  badge.textContent=off?'SAFE SHUTDOWN // CONVERTER OFFLINE':(lk||lc?'ALERT // DEFENSE-IN-DEPTH ACTIVE':'NOMINAL // 5-STAGE CONVERSION ACTIVE');
-  const col=off?'#ff1744':(lk||lc?'#ffab00':'#00e676');badge.style.color=col;badge.style.borderColor=col;
-}
 
+<div class="panel right">
+  <h3>Live Conversion Telemetry</h3>
+  <div class="card">
+    <small>Stage 1 // Fusion Core Output</small>
+    <strong id="oTh">1,000 MWth</strong>
+    <small id="oTp">Core Temp: 120 Million °C</small>
+  </div>
+  <div class="card orange">
+    <small>Stage 2 // FLiBe Blanket Thermal</small>
+    <strong id="oFl">680 °C Molten Salt</strong>
+    <small>80% Neutron Kinetic Capture</small>
+  </div>
+  <div class="card green">
+    <small>Stage 3–5 // Net Grid Delivery</small>
+    <strong id="oMW">440 MWe</strong>
+    <small id="oVolt">24.8 kV AC • 3.47 TWh/yr</small>
+  </div>
 
-function flt(k){
-  if(k==='trit'){sTrit.value=55;lg('Tritium leak -> 30s room isolation active.');}
-  if(k==='cool'){sCool.value=30;lg('Cooling loss -> Converter tripped & plasma quenched.');}
-  if(k==='mag'){sMag.value=45;lg('Magnet quench -> Energy dumped safely.');}
-  if(k==='plas'){sMag.value=50;lg('Plasma disruption -> Magnetic shutdown.');}
-  sync();
-}
-function rst(){
-  sCap.value=1000;sEff.value=44;sMag.value=95;sCool.value=92;sTrit.value=100;
-  exp=false;rx=0.45;ry=0.58;zm=0.98;bExp.className='';log.innerHTML='';lg('5-Stage ARC Converter online (440 MWe).');sync();
-}
-[sCap,sEff,sMag,sCool,sTrit].forEach(e=>e.oninput=sync);}
-bExp.onclick=()=>{exp=!exp;bExp.className=exp?'active':'';lg(exp?'Exploded View ON: Showing all 5 conversion stages.':'Standard reactor assembly.');};
-bRot.onclick=()=>{spin=!spin;bRot.className=spin?'active':'';bRot.textContent='Auto-Orbit: '+(spin?'ON':'OFF');};
-vp.onmousedown=e=>{dg=true;lx=e.clientX;ly=e.clientY;};
-window.onmouseup=()=>dg=false;
-window.onmousemove=e=>{if(!dg)return;ry+=(e.clientX-lx)*.008;rx+=(e.clientY-ly)*.008;lx=e.clientX;ly=e.clientY;};
-vp.onwheel=e=>{e.preventDefault();zm=Math.min(1.8,Math.max(.6,zm-e.deltaY*.0008));};
-function P(px,py,pz,cx,cy){
-  const cy1=Math.cos(ry),sy1=Math.sin(ry),cx1=Math.cos(rx),sx1=Math.sin(rx);
-  const x1=px*cy1-pz*sy1,z1=pz*cy1+px*sy1,y2=py*cx1-z1*sx1,z2=z1*cx1+py*sx1,f=580*zm,s=f/(f+z2+280);
-  return{x:cx+x1*s,y:cy+y2*s,s};
-}
-function R3(r,z,n,col,w,cx,cy){
-  x.strokeStyle=col;x.lineWidth=w;x.beginPath();
-  for(let i=0;i<=n;i++){const a=(i/n)*Math.PI*2,p=P(Math.cos(a)*r,Math.sin(a)*r,z,cx,cy);i===0?x.moveTo(p.x,p.y):x.lineTo(p.x,p.y);}
-  x.stroke();
-}
-function callout(px,py,pz,tx,ty,title,sub,col,cx,cy){
-  const p=P(px,py,pz,cx,cy);x.strokeStyle=col;x.lineWidth=1.5;x.beginPath();x.moveTo(p.x,p.y);x.lineTo(p.x+tx,p.y+ty);x.lineTo(p.x+tx+(tx>0?18:-18),p.y+ty);x.stroke();
-  x.fillStyle=col;x.beginPath();x.arc(p.x,p.y,3.5,0,Math.PI*2);x.fill();x.textAlign=tx>0?'left':'right';
-  const lx=p.x+tx+(tx>0?24:-24);x.font='bold 12px Segoe UI,sans-serif';x.fillText(title,lx,p.y+ty-2);
-  x.fillStyle='rgba(224,247,250,.8)';x.font='10px Segoe UI,sans-serif';x.fillText(sub,lx,p.y+ty+11);x.textAlign='left';
-}
-function loop(){
-  const w=vp.clientWidth||700,h=vp.clientHeight||550;if(c.width!==w||c.height!==h){c.width=w;c.height=h;}
-  t+=.022;if(spin&&!dg)ry+=.0045;eAmt+=((exp?1:0)-eAmt)*.08;
-  const bg=x.createRadialGradient(w/2,h/2,20,w/2,h/2,Math.max(w,h)*.75);
-  bg.addColorStop(0,'#0a2142');bg.addColorStop(.55,'#030b1a');bg.addColorStop(1,'#010308');x.fillStyle=bg;x.fillRect(0,0,w,h);
-  const cx=w/2,cy=h/2,wn=trit<75||cool<55,mc=off?'#ff1744':(wn?'#ffab00':'#00e5ff'),rgb=off?'255,23,68':(wn?'255,171,0':'0,229,255');
-  x.fillStyle='rgba(0,229,255,.28)';stars.forEach(d=>{const p=P(d.x,d.y,d.z,cx,cy);x.beginPath();x.arc(p.x,p.y,d.s*p.s,0,Math.PI*2);x.fill();});
-  const ps=1+(cap/15000)*.45,bl=x.createRadialGradient(cx,cy,6,cx,cy,250*zm*ps);
-  bl.addColorStop(0,`rgba(255,255,255,${off?.15:.8})`);bl.addColorStop(.22,`rgba(${rgb},${off?.25:.55})`);bl.addColorStop(.6,`rgba(${rgb},.12)`);bl.addColorStop(1,'rgba(0,0,0,0)');
-  x.fillStyle=bl;x.beginPath();x.arc(cx,cy,250*zm*ps,0,Math.PI*2);x.fill();
-  const z5=-180*eAmt,z4=-90*eAmt,z3=-25*eAmt,z2=35*eAmt,z1=135*eAmt;
-  if(eAmt>.05){const a1=P(0,0,z5-20,cx,cy),a2=P(0,0,z1+20,cx,cy);x.save();x.setLineDash();x.strokeStyle=`rgba(0,229,255,${.35*eAmt})`;x.lineWidth=1.5;x.beginPath();x.moveTo(a1.x,a1.y);x.lineTo(a2.x,a2.y);x.stroke();x.restore();}
-  R3(215,z5,84,off?'rgba(255,23,68,.4)':'rgba(0,230,118,.75)',3.5,cx,cy);R3(195,z5,84,'rgba(0,229,255,.35)',1.5,cx,cy);
-  for(let i=0;i<8;i++){const a=(i/8)*Math.PI*2-t*.1,p1=P(Math.cos(a)*175,Math.sin(a)*175,z5,cx,cy),p2=P(Math.cos(a)*215,Math.sin(a)*215,z5,cx,cy);x.strokeStyle='#00e676';x.lineWidth=4;x.beginPath();x.moveTo(p1.x,p1.y);x.lineTo(p2.x,p2.y);x.stroke();}
-  R3(182,z4,84,'rgba(255,215,64,.85)',3,cx,cy);
-  for(let i=0;i<16;i++){const a=(i/16)*Math.PI*2+t*.12,p1=P(Math.cos(a)*142,Math.sin(a)*142,z4,cx,cy),p2=P(Math.cos(a)*182,Math.sin(a)*182,z4,cx,cy);x.strokeStyle='#ffd740';x.lineWidth=3.2;x.beginPath();x.moveTo(p1.x,p1.y);x.lineTo(p2.x,p2.y);x.stroke();}
-  R3(156,z3,72,'rgba(255,145,0,.75)',5,cx,cy);R3(144,z3,72,'rgba(255,171,0,.4)',2,cx,cy);
-  if(!off){pulses.forEach(pl=>{pl.p=(pl.p+pl.s*(eff/42))%1;const rad=125+pl.p*90,curZ=z2+(z5-z2)*pl.p,p=P(Math.cos(pl.a+t*.15)*rad,Math.sin(pl.a+t*.15)*rad,curZ,cx,cy);x.fillStyle=pl.p<.4?'#ff9100':(pl.p<.75?'#ffd740':'#00e676');x.beginPath();x.arc(p.x,p.y,2.5*p.s,0,Math.PI*2);x.fill();});}
-  x.shadowColor=mc;x.shadowBlur=off?4:16;
-  for(let k=0;k<18;k++){const ba=(k/18)*Math.PI*2+t*.18;x.strokeStyle=k%2===0?mc:'#ff9100';x.lineWidth=2.5;x.beginPath();for(let s=0;s<=26;s++){const th=(s/26)*Math.PI*2,px=(124+26*Math.cos(th))*Math.cos(ba),py=(124+26*Math.cos(th))*Math.sin(ba),pz=26*Math.sin(th)+z2,p=P(px,py,pz,cx,cy);s===0?x.moveTo(p.x,p.y):x.lineTo(p.x,p.y);}x.stroke();}
-  x.shadowBlur=0;
-  const spd=off?.08:.75+(cap/15000)*2;
-  pts.forEach(pt=>{pt.a+=pt.s*spd;const r=124+pt.r,p=P(Math.cos(pt.a)*r,Math.sin(pt.a)*r,pt.z+z2,cx,cy);x.fillStyle=Math.random()>.25?mc:'#fff';x.beginPath();x.arc(p.x,p.y,pt.sz*p.s,0,Math.PI*2);x.fill();});
-  R3(78,z1-5,64,`rgba(${rgb},.85)`,2.8,cx,cy);x.shadowColor=mc;x.shadowBlur=off?6:28;
-  for(let l=0;l<2;l++){const rd=l===0?62:44,zp=z1+l*14;x.strokeStyle=l===0?mc:'#fff';x.lineWidth=l===0?5:2.5;x.beginPath();for(let j=0;j<3;j++){const an=(j*Math.PI*2)/3-Math.PI/2,pt=P(Math.cos(an)*rd,Math.sin(an)*rd,zp,cx,cy);j===0?x.moveTo(pt.x,pt.y):x.lineTo(pt.x,pt.y);}x.closePath();x.stroke();}
-  const pls=off?15:20+Math.sin(t*5)*3.5;R3(pls,z1+22,44,'#fff',3,cx,cy);x.shadowBlur=0;
-  if(eAmt>.45){
-    x.globalAlpha=eAmt;
-    callout(52,-30,z1,85,-45,'1. D-T Plasma Ignition Core','120M °C Fusion Reaction','#00e5ff',cx,cy);
-    callout(-124,-40,z2,-85,-55,'2. Superconducting Coils','Magnetic Plasma Confinement','#4dd0e1',cx,cy);
-    callout(152,20,z3,90,10,'3. FLiBe Molten-Salt Blanket','Captures 80% Neutron Heat','#ff9100',cx,cy);
-    callout(-178,45,z4,-85,45,'4. MHD Coils & Brayton Turbine','Converts Heat & Flux to Current','#ffd740',cx,cy);
-    callout(205,-65,z5,80,-25,'5. Step-Up Grid Transformer','24.8 kV AC City Grid Output','#00e676',cx,cy);
-    x.globalAlpha=1;
+  <h3>Defense-in-Depth</h3>
+  <div class="item" id="d1"><span>Double Containment</span><b>SEALED</b></div>
+  <div class="item" id="d2"><span>30s Room Isolation</span><b>STANDBY</b></div>
+  <div class="item" id="d3"><span>MHD / Turbine Sync</span><b>LOCKED</b></div>
+  <div class="item" id="d4"><span>Auto Plasma Quench</span><b>ARMED</b></div>
+
+  <h3>System Event Log</h3>
+  <div id="log"></div>
+</div>
+
+<div class="hint">DRAG TO ORBIT • SCROLL TO ZOOM • CLICK "EXPLODED VIEW" TO INSPECT INTERNAL STAGES</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com",
+    "three/addons/": "https://unpkg.com"
   }
-  requestAnimationFrame(loop);
 }
-rst();loop();
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const el = id => document.getElementById(id);
+const sCap = el('sCap'), sEff = el('sEff'), sMag = el('sMag'), sCool = el('sCool'), sTrit = el('sTrit');
+const vCap = el('vCap'), vEff = el('vEff'), vMag = el('vMag'), vCool = el('vCool'), vTrit = el('vTrit');
+const oTh = el('oTh'), oTp = el('oTp'), oFl = el('oFl'), oMW = el('oMW'), oVolt = el('oVolt');
+const pGrid = el('pGrid'), badge = el('badge'), bDot = el('bDot'), log = el('log'), bExp = el('bExp'), bRot = el('bRot');
+
+let cap = 1000, eff = 44, mag = 95, cool = 92, trit = 100;
+let exp = false, eAmt = 0, spin = true, off = false;
+
+const container = el('webgl-container');
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x020409, 0.018);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(14, 9, 18);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+container.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.minDistance = 7;
+controls.maxDistance = 38;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 1.1;
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(window.innerWidth, window.innerHeight),
+  1.35, 0.55, 0.22
+);
+composer.addPass(bloomPass);
+
+scene.add(new THREE.AmbientLight(0x112244, 1.8));
+const dirLight1 = new THREE.DirectionalLight(0x66ccff, 2.2);
+dirLight1.position.set(15, 25, 15);
+scene.add(dirLight1);
+
+const dirLight2 = new THREE.DirectionalLight(0xff8833, 1.4);
+dirLight2.position.set(-18, -10, -12);
+scene.add(dirLight2);
+
+const coreLight = new THREE.PointLight(0x00f0ff, 18, 25);
+scene.add(coreLight);
+
+const darkMetalMat = new THREE.MeshStandardMaterial({ color: 0x182232, metalness: 0.88, roughness: 0.25 });
+const chromeMat = new THREE.MeshStandardMaterial({ color: 0x8aa8c7, metalness: 0.92, roughness: 0.18 });
+const copperGlowMat = new THREE.MeshStandardMaterial({ color: 0xff7b00, emissive: 0xff5500, emissiveIntensity: 1.6, metalness: 0.7, roughness: 0.2 });
+const goldMhdMat = new THREE.MeshStandardMaterial({ color: 0xffd000, emissive: 0xffaa00, emissiveIntensity: 1.4, metalness: 0.85, roughness: 0.2 });
+const gridGreenMat = new THREE.MeshStandardMaterial({ color: 0x00ff88, emissive: 0x00ff88, emissiveIntensity: 1.8, metalness: 0.8, roughness: 0.2 });
+
+const plasmaUniforms = {
+  uTime: { value: 0 },
+  uColorCore: { value: new THREE.Color(0xffffff) },
+  uColorEdge: { value: new THREE.Color(0x00f0ff) },
+  uIntensity: { value: 2.4 }
+};
+
+const plasmaMat = new THREE.ShaderMaterial({
+  uniforms: plasmaUniforms,
+  transparent: true,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+  vertexShader: `
+    varying vec3 vNormal;
+    varying vec3 vViewPos;
+    varying vec2 vUv;
+    uniform float uTime;
+    void main() {
+      vUv = uv;
+      vec3 pos = position;
+      float wave = sin(uv.x * 31.4159 + uTime * 5.0) * cos(uv.y * 18.849 - uTime * 3.5) * 0.08;
+      pos += normal * wave;
+      vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
+      vNormal = normalize(normalMatrix * normal);
+      vViewPos = -mvPos.xyz;
+      gl_Position = projectionMatrix * mvPos;
+    }
+  `,
+  fragmentShader: `
+    varying vec3 vNormal;
+    varying vec3 vViewPos;
+    varying vec2 vUv;
+    uniform float uTime;
+    uniform vec3 uColorCore;
+    uniform vec3 uColorEdge;
+    uniform float uIntensity;
+    void main() {
+      vec3 viewDir = normalize(vViewPos);
+      float fresnel = pow(1.0 - abs(dot(viewDir, vNormal)), 1.6);
+      float bands = 0.5 + 0.5 * sin(vUv.x * 50.0 - uTime * 8.0 + sin(vUv.y * 12.0 + uTime * 4.0));
+      vec3 col = mix(uColorCore, uColorEdge, fresnel * 0.85 + bands * 0.25);
+      float alpha = (0.55 + 0.45 * bands) * (1.0 - fresnel * 0.35);
+      gl_FragColor = vec4(col * uIntensity, alpha);
+    }
+  `
+});
+
+const reactorGroup = new THREE.Group();
+scene.add(reactorGroup);
+
+const stage1 = new THREE.Group();
+const plasmaTorus = new THREE.Mesh(new THREE.TorusGeometry(3.4, 0.92, 48, 128), plasmaMat);
+plasmaTorus.rotation.x = Math.PI / 2;
+stage1.add(plasmaTorus);
+
+const filamentTorus = new THREE.Mesh(new THREE.TorusGeometry(3.4, 0.14, 16, 128), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+filamentTorus.rotation.x = Math.PI / 2;
+stage1.add(filamentTorus);
+
+stage1.add(new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.15, 4.6, 32), chromeMat));
+for (let i = -2; i <= 2; i++) {
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.22, 0.08, 12, 48), copperGlowMat);
+  ring.rotation.x = Math.PI / 2;
+  ring.position.y = i * 0.85;
+  stage1.add(ring);
+}
+reactorGroup.add(stage1);
+
+const stage2 = new THREE.Group();
+for (let i = 0; i < 16; i++) {
+  const coilHolder = new THREE.Group();
+  coilHolder.rotation.y = (i / 16) * Math.PI * 2;
+  const dCoil = new THREE.Mesh(new THREE.TorusGeometry(1.65, 0.14, 16, 48), darkMetalMat);
+  dCoil.position.x = 3.4;
+  coilHolder.add(dCoil);
+  const glowStrip = new THREE.Mesh(new THREE.TorusGeometry(1.48, 0.035, 8, 48), new THREE.MeshBasicMaterial({ color: 0x00f0ff }));
+  glowStrip.position.x = 3.4;
+  coilHolder.add(glowStrip);
+  stage2.add(coilHolder);
+}
+reactorGroup.add(stage2);
+
+const stage3 = new THREE.Group();
+const blanketTop = new THREE.Mesh(new THREE.TorusGeometry(4.9, 0.42, 24, 96), copperGlowMat);
+blanketTop.rotation.x = Math.PI / 2;
+blanketTop.position.y = 1.65;
+stage3.add(blanketTop);
+
+const blanketBot = new THREE.Mesh(new THREE.TorusGeometry(4.9, 0.42, 24, 96), copperGlowMat);
+blanketBot.rotation.x = Math.PI / 2;
+blanketBot.position.y = -1.65;
+stage3.add(blanketBot);
+
+for (let i = 0; i < 24; i++) {
+  const a = (i / 24) * Math.PI * 2;
+  const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 3.3, 12), darkMetalMat);
+  pipe.position.set(Math.cos(a) * 5.25, 0, Math.sin(a) * 5.25);
+  stage3.add(pipe);
+}
+reactorGroup.add(stage3);
+
+const stage4 = new THREE.Group();
+const mhdOuter = new THREE.Mesh(new THREE.TorusGeometry(6.3, 0.25, 16, 96), darkMetalMat);
+mhdOuter.rotation.x = Math.PI / 2;
+stage4.add(mhdOuter);
+
+const turbineBlades = new THREE.Group();
+for (let i = 0; i < 32; i++) {
+  const a = (i / 32) * Math.PI * 2;
+  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.08, 0.35), goldMhdMat);
+  blade.position.set(Math.cos(a) * 5.85, 0, Math.sin(a) * 5.85);
+  blade.rotation.y = -a;
+  blade.rotation.x = 0.45;
+  turbineBlades.add(blade);
+}
+stage4.add(turbineBlades);
+reactorGroup.add(stage4);
+
+const stage5 = new THREE.Group();
+const gridRing = new THREE.Mesh(new THREE.TorusGeometry(7.6, 0.22, 16, 96), gridGreenMat);
+gridRing.rotation.x = Math.PI / 2;
+gridRing.position.y = -1.2;
+stage5.add(gridRing);
+
+for (let i = 0; i < 8; i++) {
+  const a = (i / 8) * Math.PI * 2;
+  const busbar = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.24, 1.4, 16), chromeMat);
+  busbar.position.set(Math.cos(a) * 7.6, -0.5, Math.sin(a) * 7.6);
+  stage5.add(busbar);
+}
+reactorGroup.add(stage5);
+
+const pCount = 450;
+const pGeo = new THREE.BufferGeometry();
+const pPos = new Float32Array(pCount * 3);
+const pData = [];
+for (let i = 0; i < pCount; i++) {
+  const angle = Math.random() * Math.PI * 2;
+  const rad = 3.4 + (Math.random() - 0.5) * 1.4;
+  const y = (Math.random() - 0.5) * 1.2;
+  pPos[i * 3] = Math.cos(angle) * rad;
+  pPos[i * 3 + 1] = y;
+  pPos[i * 3 + 2] = Math.sin(angle) * rad;
+  pData.push({ angle, rad, y, speed: 0.015 + Math.random() * 0.03 });
+}
+pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+const pMat = new THREE.PointsMaterial({ color: 0x00f0ff, size: 0.14, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending });
+stage1.add(new THREE.Points(pGeo, pMat));
+
+const gridHelper = new THREE.GridHelper(60, 60, 0x00f0ff, 0x08182e);
+gridHelper.position.y = -4.5;
+gridHelper.material.transparent = true;
+gridHelper.material.opacity = 0.28;
+scene.add(gridHelper);
+
+function lg(m) { log.innerHTML = `<div><span style="color:#00f0ff">[SYS]</span> ${m}</div>` + log.innerHTML; }
+function sd(id, tx, w) { const e = el(id); e.querySelector('b').textContent = tx; e.className = w ? 'item warn' : 'item'; }
+
+function sync() {
+  cap = +sCap.value; eff = +sEff.value; mag = +sMag.value; cool = +sCool.value; trit = +sTrit.value;
+  vCap.textContent = cap.toLocaleString() + ' MWth'; vEff.textContent = eff + '%';
+  vMag.textContent = mag + '%'; vCool.textContent = cool + '%'; vTrit.textContent = trit + '%';
+
+  const lk = trit < 75, lc = cool < 55, lm = mag < 60;
+  off = lm || cool < 35;
+  const th = off ? 0 : cap;
+  const mw = Math.round(th * (eff / 100));
+
+  oTh.textContent = th.toLocaleString() + ' MWth';
+  oTp.textContent = off ? 'Plasma Quenched (Safe)' : 'Core Temp: ' + Math.round(115 + (cap / 15000) * 35 + (100 - cool) * 0.8) + ' Million °C';
+  oFl.textContent = off ? '290 °C (Standby)' : Math.round(620 + (cap / 15000) * 140 + (100 - cool) * 1.2) + ' °C Molten Salt';
+  oMW.textContent = mw.toLocaleString() + ' MWe';
+  oVolt.textContent = (off ? '0.0 kV' : (22 + (mw / 9750) * 14).toFixed(1) + ' kV AC') + ' • ' + ((mw * 8760 * 0.9) / 1e6).toFixed(2) + ' TWh/yr';
+  pGrid.textContent = '4. ' + mw.toLocaleString() + ' MWe GRID';
+
+  sd('d1', lk ? 'BREACH' : 'SEALED', lk);
+  sd('d2', lk ? 'ISOLATED (<30s)' : 'STANDBY', lk);
+  sd('d3', off ? 'OFFLINE' : (lc ? 'DERATED' : 'LOCKED'), off || lc);
+  sd('d4', off ? 'TRIGGERED' : 'ARMED', off);
+
+  badge.textContent = off ? 'SAFE SHUTDOWN // CONVERTER OFFLINE' : (lk || lc ? 'ALERT // DEFENSE-IN-DEPTH ACTIVE' : 'NOMINAL // 5-STAGE CONVERSION ACTIVE');
+  const col = off ? '#ff1e42' : (lk || lc ? '#ffd000' : '#00ff88');
+  badge.style.color = col; badge.style.borderColor = col;
+  bDot.style.background = off ? '#ff1e42' : '#00f0ff';
+
+  if (off) {
+    plasmaUniforms.uColorEdge.value.setHex(0xff1e42); plasmaUniforms.uIntensity.value = 0.25;
+    coreLight.color.setHex(0xff1e42); coreLight.intensity = 3; pMat.color.setHex(0xff1e42);
+  } else if (lk || lc) {
+    plasmaUniforms.uColorEdge.value.setHex(0xffaa00); plasmaUniforms.uIntensity.value = 1.9;
+    coreLight.color.setHex(0xffaa00); coreLight.intensity = 14; pMat.color.setHex(0xffaa00);
+  } else {
+    plasmaUniforms.uColorEdge.value.setHex(0x00f0ff); plasmaUniforms.uIntensity.value = 2.0 + (cap / 15000) * 1.4;
+    coreLight.color.setHex(0x00f0ff); coreLight.intensity = 15 + (cap / 15000) * 12; pMat.color.setHex(0x00f0ff);
+  }
+}
+
+window.flt = function(k) {
+  if (k === 'trit') { sTrit.value = 55; lg('Tritium leak detected -> 30s room isolation active.'); }
+  if (k === 'cool') { sCool.value = 30; lg('FLiBe cooling loss -> Converter tripped & plasma quenched.'); }
+  if (k === 'mag') { sMag.value = 45; lg('REBCO magnet quench -> Stored energy dumped safely.'); }
+  if (k === 'plas') { sMag.value = 50; lg('Plasma disruption -> Magnetic shutdown triggered.'); }
+  sync();
+};
+
+window.rst = function() {
+  sCap.value = 1000; sEff.value = 44; sMag.value = 95; sCool.value = 92; sTrit.value = 100;
+  exp = false; bExp.className = ''; log.innerHTML = '';
+  lg('5-Stage ARC-X Converter initialized (440 MWe nominal).');
+  sync();
+};
+
+[sCap, sEff, sMag, sCool, sTrit].forEach(e => e.oninput = sync);
+
+bExp.onclick = () => {
+  exp = !exp; bExp.className = exp ? 'active' : '';
+  lg(exp ? 'Exploded View ENGAGED: Inspecting 5 vertical stages.' : 'Reactor core re-assembled.');
+};
+
+bRot.onclick = () => {
+  spin = !spin; controls.autoRotate = spin; bRot.className = spin ? 'active' : '';
+  bRot.textContent = 'Auto-Orbit: ' + (spin ? 'ON' : 'OFF');
+};
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  composer.setSize(window.innerWidth, window.innerHeight);
+});
+
+const calloutTargets = [
+  { el: el('lbl1'), pos: new THREE.Vector3(3.4, 0, 0), stage: stage1 },
+  { el: el('lbl2'), pos: new THREE.Vector3(-4.8, 0.8, 0), stage: stage2 },
+  { el: el('lbl3'), pos: new THREE.Vector3(5.2, 1.5, 0), stage: stage3 },
+  { el: el('lbl4'), pos: new THREE.Vector3(-6.2, 0, 0), stage: stage4 },
+  { el: el('lbl5'), pos: new THREE.Vector3(7.6, -1.0, 0), stage: stage5 }
+];
+
+function updateLabels() {
+  calloutTargets.forEach(item => {
+    if (eAmt < 0.45) { item.el.style.opacity = '0'; return; }
+    const worldPos = item.pos.clone().applyMatrix4(item.stage.matrixWorld);
+    worldPos.project(camera);
+    if (worldPos.z > 1) { item.el.style.opacity = '0'; return; }
+    const x = (worldPos.x * 0.5 + 0.5) * window.innerWidth;
+    const y = (-(worldPos.y * 0.5) + 0.5) * window.innerHeight;
+    item.el.style.left = `${x}px`; item.el.style.top = `${y}px`;
+    item.el.style.opacity = Math.min(1, (eAmt - 0.45) * 2).toFixed(2);
+  });
+}
+
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = clock.getDelta();
+  const elapsed = clock.getElapsedTime();
+
+  plasmaUniforms.uTime.value = elapsed;
+  eAmt += ((exp ? 1 : 0) - eAmt) * 0.08;
+  stage1.position.y = eAmt * 5.2;
+  stage2.position.y = eAmt * 2.4;
+  stage3.position.y = eAmt * -0.2;
+  stage4.position.y = eAmt * -2.8;
+  stage5.position.y = eAmt * -5.2;
+
+  const speedMult = off ? 0.05 : 1 + (cap / 15000) * 2.2;
+  turbineBlades.rotation.y += dt * 1.4 * speedMult;
+
+  const posAttr = pGeo.attributes.position;
+  for (let i = 0; i < pCount; i++) {
+    const d = pData[i];
+    d.angle += d.speed * speedMult;
+    posAttr.array[i * 3] = Math.cos(d.angle) * d.rad;
+    posAttr.array[i * 3 + 2] = Math.sin(d.angle) * d.rad;
+  }
+  posAttr.needsUpdate = true;
+
+  if (!off) coreLight.intensity = (16 + (cap / 15000) * 12) + Math.sin(elapsed * 8) * 2.5;
+
+  controls.update();
+  updateLabels();
+  composer.render();
+}
+
+rst();
+animate();
 </script>
 </body>
 </html>
+
